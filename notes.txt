@@ -1,0 +1,6 @@
+
+session library:
+https://github.com/bpowers/seshcookie
+
+postgres library:
+https://github.com/bmizerany/pq

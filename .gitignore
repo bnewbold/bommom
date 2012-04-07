@@ -6,3 +6,5 @@
 .*
 *.tmp
 *.old
+pkg/
+bin/
