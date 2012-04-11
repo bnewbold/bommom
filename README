@@ -12,3 +12,24 @@ BomMom: A web publishing/wiki system for electronics Bill of Materials (BOM)
 
 A work in progress as of early April 2012.
 
+### Instructions
+
+Install golang compiler and run `go build` in this directory, then run the
+`bommom` command to list available commands and options. 
+
+### Intended Initial Features
+
+ - SQL-backed datastore for BOMs and web authentication
+ - file-backed datastore for BOMs
+ - import/export to .csv and JSON
+
+### Potential Later Features
+
+ - auto-submit orders to major distributors
+ - current inventory tracking
+ - per-part statistics (eg, most popular parts)
+ - REST API
+ - git-backed BomStore
+ - git post-commit hooks and/or github integration
+ - plugins for CAD software (Eagle, KiCad, etc)
+
