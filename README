@@ -22,6 +22,7 @@ Install golang compiler and run `go build` in this directory, then run the
  - SQL-backed datastore for BOMs and web authentication
  - file-backed datastore for BOMs
  - import/export to .csv and JSON
+ - Octopart API price fetching
 
 ### Potential Later Features
 
@@ -32,4 +33,12 @@ Install golang compiler and run `go build` in this directory, then run the
  - git-backed BomStore
  - git post-commit hooks and/or github integration
  - plugins for CAD software (Eagle, KiCad, etc)
+ - Amazon, McMaster, eBay, Ali Baba, etc, price fetching
+ - "Standard"/"Estimate" pricing modules for PCBs, assembly, etc
+ - "sub-BOM" feature a la git sub-repositories
+
+### Previous Work
+
+ - [SKDB](http://opensourceecology.org/wiki/SKDB)
+ - "[CAD](http://cad.devl.org/)"
 
