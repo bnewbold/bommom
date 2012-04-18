@@ -1,0 +1,50 @@
+Symbol,Manufacturer,Part Number,Function,Source
+IC1,FTDI,FT232RL,USB-to-Serial Converter,Digikey
+U1,Atmel,AT91RM9200-QU-208,ARM920T Processor (180MHz),Digikey
+U2,Micron,MT48LC16M16A2P,32MB SDRAM,Digikey
+U3,Atmel,AT45DB642D,8MB Dataflash,Digikey
+U4,Hirose,DM3B,MicroSD Socket,Digikey
+U5,Hirose,HFQ461CT,Connector for OLED Display,Digikey
+U6,,LED,"3.3v LED, 0805 Package",Digikey
+U7,Hirose,UX60A-MB-5ST,Mini-USB Connector,Digikey
+U8,Toshiba,TCM8230MD,CMOS Camera,Sparkfun
+U9,Assmann,AE9924,USB Host connector,Digikey
+U10,Maxim,MAX6412UK28,Reset Supervisor,Digikey/Maxim
+U11,Seiko,SSPT7F-12.5PF20PPM,"32.768kHz Crystal, 12.5pf, 20ppm",Digikey
+U12,ECS,ECX64,18.432MHz Crystal,Digikey
+U13,,LED,"3.3V LED, 0805 Package",Digikey
+U14,Molex,WM24032CT,SD Card Socket,Digikey
+U15,,LED,"3.3V LED, 0805 Package",Digikey
+U16,TI,ADS7846,Resistive Touchscreen Controller,Digikey
+U17,FTI,SFW8R-4STE1LF,FFC Connector (for JTAG),FTI
+U18,FCI,62674-241121ALF,"FFC Connector, 24 conductor",Digikey
+U19,TAOS,TSL256X,Light Intensity Sensor,
+U20,PNI,MicroMag3,3-axis Magnetometer Sensor,Sparkfun
+U21,Avago,ADJD-S371-QR999,RGB Colour Sensor,Sparkfun
+U22,Maxbotics,LV-MAXSONAR-EZ1,Ultrasonic Distance Sensor,Sparkfun
+U23,,2x10,"0.1"" Pitch header for JTAG",
+U24,Sparkfun,IMU5DEG,5-DOF Inertial Measurement Unit,Sparkfun
+U25,Sparkfun,IMU5DEG,5-DOF Inertial Measurement Unit,Sparkfun
+U26,VTI,SCP1000,Absolute Pressure Sensor,Sparkfun
+U27,Melexis,MLX90614,Non-contact Temperature Sensor,Digikey or Future
+U28,ECS,3963-BN,Optional 20MHz Oscillator for Camera,Digikey
+U29,Sensiron,SHT1x,Temperature and Humidity Sensor,
+U30,Microchip,MCP6S26-PGA,Programmable Analog Gain Array,Digikey
+U31,Microchip,dsPIC33FJ64GP706,Microcontroller,Digikey
+U32,,2x04,"0.1"" Pitch Header for GPS Board",
+U33,FCI,62674-241121ALF,"FFC Connector, 24 conductor",Digikey
+U35,TI,74LVC138A,3-to-8 Decoder,Digikey
+U36,TI,TPS789xx,Voltage Regulator,Digikey
+U37,TI,TPS789XX,Voltage Regulator,Digikey
+U38,TI,TPS79118,1.8V Voltage Regulator,Digikey
+U40,,1x05,"0.1"" Pitch Header",
+U41,,1x03,"0.1"" Pitch Header",
+U42,Panasonic,EVQ BUTTON,Reset Switch,Digikey
+U43,,LED,"3.3V LED, 0805 Package",Digikey
+U44,National,LM386,Op Amp,Digikey
+U46,,1x02,"0.1"" Pitch Header",
+U47,CUI,SJ-2524,3.55mm Headphone Connector,Digikey
+U48,FCI,SFW15R-2STE1LF,FFC Connector (top to bottom),Digikey
+U49,FTI,SFW8R-4STE1LF,FFC Connector,Digikey
+U50,Rohm,RBL161L,Diode,Digikey
+DISP1,CMEL,C0280QGLH-T,"2.8"" OLED Display, 16-bit colour, 320x240 resolution",Vision-Opto or OSD

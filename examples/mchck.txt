@@ -1,0 +1,25 @@
+Part costs
+Count   Part                                 Price ($)
+------------------------------------------------------
+2       RES 100 OHM 1/10W 5% 0603 SMD        0.00221
+3       CAP CER 0.1UF 16V 10% X7R 0603       0.00553
+1       CAP CER 1UF 10V 10% X5R 0603         0.013
+1       CER RESONATOR 8.00MHZ SMD            0.32867
+1       IC MCU 32BIT 64KB FLASH 48LQFP       2.46225
+1       SWITCH TACTILE SPST-NO 0.02A 15V     0.45619
+1       LED 1.6X0.8MM 601NM ORN CLR SMD      0.062
+2       RES 1.0K OHM 1/10W 5% 0603 SMD       0.00221
+------------------------------------------------------
+Total                                       $3.34754
+
+Manufacturing Costs
+What       Price ($)
+--------------------
+PCB        0.2
+SMT        0.42
+Handling   0.67
+Test       0.07
+Package    0.63
+Setup      0.5
+--------------------
+Total      2.5
