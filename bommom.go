@@ -41,11 +41,71 @@ func main() {
 	switch flag.Arg(0) {
 	default:
 		log.Fatal("Error: unknown command: ", flag.Arg(0))
-	case "load", "dump", "serve":
+	case "load", "serve":
 		log.Fatal("Error: Unimplemented, sorry")
 	case "init":
 		log.Println("Initializing...")
+        initCmd()
+    case "dump":
+        log.Println("Dumping...")
+        dumpCmd()
+    case "list":
+        listCmd()
 	}
+}
+
+func initCmd() {
+    _, err := NewJSONFileBomStore(*fileStorePath)
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+
+func dumpCmd() {
+    b := makeTestBom()
+    b.Version = "v001"
+    bs := &BomStub{Name: "widget",
+                    Owner: "common",
+                    Description: "fancy stuff",
+                    HeadVersion: b.Version,
+                    IsPublicView: true,
+                    IsPublicEdit: true}
+    jfbs, err := OpenJSONFileBomStore(*fileStorePath)
+    if err != nil {
+        log.Fatal(err)
+    }
+    jfbs.Persist(bs, b, "v001")
+}
+
+func listCmd() {
+    jfbs, err := OpenJSONFileBomStore(*fileStorePath)
+    if err != nil {
+        log.Fatal(err)
+    }
+    var bomStubs []BomStub
+    if flag.NArg() > 2 {
+        log.Fatal("Error: too many arguments...")
+    }
+    if flag.NArg() == 2 {
+        name := flag.Arg(1)
+        if !isShortName(name) {
+            log.Fatal("Error: not a possible username: " + name)
+        }
+        bomStubs, err = jfbs.ListBoms(ShortName(name))
+        if err != nil {
+            log.Fatal(err)
+        }
+    } else {
+        // list all boms from all names
+        // TODO: ERROR
+        bomStubs, err = jfbs.ListBoms("")
+        if err != nil {
+            log.Fatal(err)
+        }
+    }
+    for _, bs := range bomStubs {
+        fmt.Println(bs.Owner + "/" + bs.Name)
+    }
 }
 
 func printUsage() {
@@ -57,8 +117,9 @@ func printUsage() {
 	fmt.Println("Commands:")
 	fmt.Println("")
 	fmt.Println("\tinit \t\t initialize BOM and authentication datastores")
-	fmt.Println("\tload [file]\t import a BOM")
-	fmt.Println("\tdump [name]\t dump a BOM to stdout")
+	fmt.Println("\tlist [user]\t\t list BOMs, optionally filtered by user")
+	fmt.Println("\tload <file>\t import a BOM")
+	fmt.Println("\tdump <user> <name>\t dump a BOM to stdout")
 	fmt.Println("\tserve\t\t serve up web interface over HTTP")
 	fmt.Println("")
 	fmt.Println("Extra command line options:")
