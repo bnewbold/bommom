@@ -7,7 +7,6 @@ import (
 	"testing"
 )
 
-
 func TestNewBom(t *testing.T) {
 	b := makeTestBom()
 	if b == nil {

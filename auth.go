@@ -23,18 +23,18 @@ type AuthService interface {
 // always returned.
 type DummyAuth bool // TODO: what is the best "dummy" abstract base type?
 
-func (da *DummyAuth) CheckLogin(name, pw string) error {
+func (da DummyAuth) CheckLogin(name, pw string) error {
 	return nil
 }
 
-func (da *DummyAuth) NewAccount(name, pw, email string) error {
+func (da DummyAuth) NewAccount(name, pw, email string) error {
 	return nil
 }
 
-func (da *DummyAuth) ChangePassword(name, oldPw, newPw string) error {
+func (da DummyAuth) ChangePassword(name, oldPw, newPw string) error {
 	return nil
 }
 
-func (da *DummyAuth) GetEmail(name string) (string, error) {
+func (da DummyAuth) GetEmail(name string) (string, error) {
 	return "example@bommom.com", nil
 }
