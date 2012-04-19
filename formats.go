@@ -1,6 +1,6 @@
 package main
 
-// Bom/BomStub conversion/dump/load routines
+// Bom/BomMeta conversion/dump/load routines
 
 import (
 	"encoding/csv"
@@ -14,7 +14,7 @@ import (
 
 // --------------------- text (CLI only ) -----------------------
 
-func DumpBomAsText(bs *BomStub, b *Bom, out io.Writer) {
+func DumpBomAsText(bs *BomMeta, b *Bom, out io.Writer) {
 	fmt.Fprintln(out)
 	fmt.Fprintf(out, "%s (version %s, created %s)\n", bs.Name, b.Version, b.Created)
 	fmt.Fprintf(out, "Creator: %s\n", bs.Owner)
@@ -81,7 +81,7 @@ func LoadBomFromCSV(out io.Writer) (*Bom, error) {
 
 // --------------------- JSON -----------------------
 
-func DumpBomAsJSON(bs *BomStub, b *Bom, out io.Writer) {
+func DumpBomAsJSON(bs *BomMeta, b *Bom, out io.Writer) {
 
 	obj := map[string]interface{}{
 		"bom_meta": bs,
@@ -94,9 +94,9 @@ func DumpBomAsJSON(bs *BomStub, b *Bom, out io.Writer) {
 	}
 }
 
-func LoadBomFromJSON(input io.Reader) (*BomStub, *Bom, error) {
+func LoadBomFromJSON(input io.Reader) (*BomMeta, *Bom, error) {
 
-	bs := &BomStub{}
+	bs := &BomMeta{}
 	b := &Bom{}
 
 	obj := map[string]interface{}{
@@ -120,7 +120,7 @@ func LoadBomFromJSON(input io.Reader) (*BomStub, *Bom, error) {
 
 // --------------------- XML -----------------------
 
-func DumpBomAsXML(bs *BomStub, b *Bom, out io.Writer) {
+func DumpBomAsXML(bs *BomMeta, b *Bom, out io.Writer) {
 
 	enc := xml.NewEncoder(out)
 	if err := enc.Encode(bs); err != nil {
@@ -131,9 +131,9 @@ func DumpBomAsXML(bs *BomStub, b *Bom, out io.Writer) {
 	}
 }
 
-func LoadBomFromXML(input io.Reader) (*BomStub, *Bom, error) {
+func LoadBomFromXML(input io.Reader) (*BomMeta, *Bom, error) {
 
-	bs := BomStub{}
+	bs := BomMeta{}
 	b := Bom{}
 
 	enc := xml.NewDecoder(input)

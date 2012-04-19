@@ -34,9 +34,9 @@ func (li *LineItem) Id() string {
 }
 
 // The main anchor of a BOM as a cohesive whole, with a name and permissions.
-// Multiple BOMs are associated with a single BomStub; the currently active one
+// Multiple BOMs are associated with a single BomMeta; the currently active one
 // is the 'head'.
-type BomStub struct {
+type BomMeta struct {
 	Name         string `json:"name"`
 	Owner        string `json:"owner_name"`
 	Description  string `json:"description"`
@@ -87,7 +87,7 @@ func (b *Bom) Validate() error {
 	return nil
 }
 
-func (bs *BomStub) Validate() error {
+func (bs *BomMeta) Validate() error {
 	if !isShortName(bs.Name) {
 		return Error("name not a ShortName: \"" + bs.Name + "\"")
 	}

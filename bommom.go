@@ -77,7 +77,7 @@ func openBomStore() {
 	}
 }
 
-func dumpOut(fname string, bs *BomStub, b *Bom) {
+func dumpOut(fname string, bs *BomMeta, b *Bom) {
 	var outFile io.Writer
 	if fname == "" {
 		outFile = os.Stdout
@@ -120,7 +120,7 @@ func dumpOut(fname string, bs *BomStub, b *Bom) {
 
 }
 
-func loadIn(fname string) (bs *BomStub, b *Bom) {
+func loadIn(fname string) (bs *BomMeta, b *Bom) {
 
 	if inFormat == "" {
 		switch ext := path.Ext(fname); ext {
@@ -160,14 +160,14 @@ func loadIn(fname string) (bs *BomStub, b *Bom) {
 func initCmd() {
 
 	openBomStore()
-	bs, err := bomstore.GetStub(ShortName("common"), ShortName("gizmo"))
+	bs, err := bomstore.GetBomMeta(ShortName("common"), ShortName("gizmo"))
 	if err == nil {
-		// dummy BomStub already exists?
+		// dummy BomMeta already exists?
 		return
 	}
 	b := makeTestBom()
 	b.Version = "v001"
-	bs = &BomStub{Name: "gizmo",
+	bs = &BomMeta{Name: "gizmo",
 		Owner:        "common",
 		Description:  "fancy stuff",
 		HeadVersion:  b.Version,
@@ -227,7 +227,7 @@ func loadCmd() {
 	bs, b := loadIn(inFname)
 	if inFormat == "csv" && bs == nil {
 		// TODO: from inname? if ShortName?
-		bs = &BomStub{}
+		bs = &BomMeta{}
 	}
 
 	bs.Owner = userName
@@ -258,11 +258,11 @@ func convertCmd() {
 	}
 	if inFormat == "csv" && bs == nil {
 		// TODO: from inname? if ShortName?
-		bs = &BomStub{Name: "untitled", Owner: anonUser.name}
+		bs = &BomMeta{Name: "untitled", Owner: anonUser.name}
 	}
 
 	if err := bs.Validate(); err != nil {
-		log.Fatal("loaded bomstub not valid: " + err.Error())
+		log.Fatal("loaded bommeta not valid: " + err.Error())
 	}
 	if err := b.Validate(); err != nil {
 		log.Fatal("loaded bom not valid: " + err.Error())
@@ -274,7 +274,7 @@ func convertCmd() {
 func listCmd() {
 
 	openBomStore()
-	var bomStubs []BomStub
+	var bomMetas []BomMeta
 	var err error
 	if flag.NArg() > 2 {
 		log.Fatal("Error: too many arguments...")
@@ -284,18 +284,18 @@ func listCmd() {
 		if !isShortName(name) {
 			log.Fatal("Error: not a possible username: " + name)
 		}
-		bomStubs, err = bomstore.ListBoms(ShortName(name))
+		bomMetas, err = bomstore.ListBoms(ShortName(name))
 		if err != nil {
 			log.Fatal(err)
 		}
 	} else {
 		// list all boms from all names
-		bomStubs, err = bomstore.ListBoms("")
+		bomMetas, err = bomstore.ListBoms("")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	for _, bs := range bomStubs {
+	for _, bs := range bomMetas {
 		fmt.Println(bs.Owner + "/" + bs.Name)
 	}
 }
