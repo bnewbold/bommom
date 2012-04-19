@@ -87,12 +87,12 @@ func (b *Bom) Validate() error {
 	return nil
 }
 
-func (bs *BomMeta) Validate() error {
-	if !isShortName(bs.Name) {
-		return Error("name not a ShortName: \"" + bs.Name + "\"")
+func (bm *BomMeta) Validate() error {
+	if !isShortName(bm.Name) {
+		return Error("name not a ShortName: \"" + bm.Name + "\"")
 	}
-	if !isShortName(bs.Owner) {
-		return Error("owner name not a ShortName: \"" + bs.Owner + "\"")
+	if !isShortName(bm.Owner) {
+		return Error("owner name not a ShortName: \"" + bm.Owner + "\"")
 	}
 	return nil
 }

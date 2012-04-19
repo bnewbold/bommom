@@ -77,7 +77,7 @@ func openBomStore() {
 	}
 }
 
-func dumpOut(fname string, bs *BomMeta, b *Bom) {
+func dumpOut(fname string, bm *BomMeta, b *Bom) {
 	var outFile io.Writer
 	if fname == "" {
 		outFile = os.Stdout
@@ -107,20 +107,20 @@ func dumpOut(fname string, bs *BomMeta, b *Bom) {
 
 	switch *outFormat {
 	case "text", "":
-		DumpBomAsText(bs, b, outFile)
+		DumpBomAsText(bm, b, outFile)
 	case "json":
-		DumpBomAsJSON(bs, b, outFile)
+		DumpBomAsJSON(bm, b, outFile)
 	case "csv":
 		DumpBomAsCSV(b, outFile)
 	case "xml":
-		DumpBomAsXML(bs, b, outFile)
+		DumpBomAsXML(bm, b, outFile)
 	default:
 		log.Fatal("Error: unknown/unimplemented format: " + *outFormat)
 	}
 
 }
 
-func loadIn(fname string) (bs *BomMeta, b *Bom) {
+func loadIn(fname string) (bm *BomMeta, b *Bom) {
 
 	if inFormat == "" {
 		switch ext := path.Ext(fname); ext {
@@ -143,37 +143,37 @@ func loadIn(fname string) (bs *BomMeta, b *Bom) {
 
 	switch inFormat {
 	case "json":
-		bs, b, err = LoadBomFromJSON(infile)
+		bm, b, err = LoadBomFromJSON(infile)
 	case "csv":
 		b, err = LoadBomFromCSV(infile)
 	case "xml":
-		bs, b, err = LoadBomFromXML(infile)
+		bm, b, err = LoadBomFromXML(infile)
 	default:
 		log.Fatal("Error: unknown/unimplemented format: " + *outFormat)
 	}
 	if err != nil {
 		log.Fatal(err)
 	}
-	return bs, b
+	return bm, b
 }
 
 func initCmd() {
 
 	openBomStore()
-	bs, err := bomstore.GetBomMeta(ShortName("common"), ShortName("gizmo"))
+	bm, err := bomstore.GetBomMeta(ShortName("common"), ShortName("gizmo"))
 	if err == nil {
 		// dummy BomMeta already exists?
 		return
 	}
 	b := makeTestBom()
 	b.Version = "v001"
-	bs = &BomMeta{Name: "gizmo",
+	bm = &BomMeta{Name: "gizmo",
 		Owner:        "common",
 		Description:  "fancy stuff",
 		HeadVersion:  b.Version,
 		IsPublicView: true,
 		IsPublicEdit: true}
-	bomstore.Persist(bs, b, "v001")
+	bomstore.Persist(bm, b, "v001")
 }
 
 func dumpCmd() {
@@ -201,12 +201,12 @@ func dumpCmd() {
 	if auth == nil {
 		auth = DummyAuth(true)
 	}
-	bs, b, err := bomstore.GetHead(ShortName(userStr), ShortName(nameStr))
+	bm, b, err := bomstore.GetHead(ShortName(userStr), ShortName(nameStr))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	dumpOut(fname, bs, b)
+	dumpOut(fname, bm, b)
 }
 
 func loadCmd() {
@@ -224,20 +224,20 @@ func loadCmd() {
 		log.Fatal("user, name, and version must be ShortNames")
 	}
 
-	bs, b := loadIn(inFname)
-	if inFormat == "csv" && bs == nil {
+	bm, b := loadIn(inFname)
+	if inFormat == "csv" && bm == nil {
 		// TODO: from inname? if ShortName?
-		bs = &BomMeta{}
+		bm = &BomMeta{}
 	}
 
-	bs.Owner = userName
-	bs.Name = bomName
+	bm.Owner = userName
+	bm.Name = bomName
 	b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
 	b.Created = time.Now()
 
 	openBomStore()
 
-	bomstore.Persist(bs, b, ShortName(version))
+	bomstore.Persist(bm, b, ShortName(version))
 }
 
 func convertCmd() {
@@ -251,14 +251,14 @@ func convertCmd() {
 	inFname := flag.Arg(1)
 	outFname := flag.Arg(2)
 
-	bs, b := loadIn(inFname)
+	bm, b := loadIn(inFname)
 
 	if b == nil {
 		log.Fatal("null bom")
 	}
-	if inFormat == "csv" && bs == nil {
+	if inFormat == "csv" && bm == nil {
 		// TODO: from inname? if ShortName?
-		bs = &BomMeta{Name: "untitled",
+		bm = &BomMeta{Name: "untitled",
 			Owner: anonUser.name}
 		b.Version = "unversioned"
 	}
@@ -266,14 +266,14 @@ func convertCmd() {
 	b.Created = time.Now()
 	b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
 
-	if err := bs.Validate(); err != nil {
+	if err := bm.Validate(); err != nil {
 		log.Fatal("loaded bommeta not valid: " + err.Error())
 	}
 	if err := b.Validate(); err != nil {
 		log.Fatal("loaded bom not valid: " + err.Error())
 	}
 
-	dumpOut(outFname, bs, b)
+	dumpOut(outFname, bm, b)
 }
 
 func listCmd() {
@@ -300,8 +300,8 @@ func listCmd() {
 			log.Fatal(err)
 		}
 	}
-	for _, bs := range bomMetas {
-		fmt.Println(bs.Owner + "/" + bs.Name)
+	for _, bm := range bomMetas {
+		fmt.Println(bm.Owner + "/" + bm.Name)
 	}
 }
 

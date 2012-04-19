@@ -12,7 +12,7 @@ type BomStore interface {
 	GetBomMeta(user, name ShortName) (*BomMeta, error)
 	GetHead(user, name ShortName) (*BomMeta, *Bom, error)
 	GetBom(user, name, version ShortName) (*Bom, error)
-	Persist(bs *BomMeta, b *Bom, version ShortName) error
+	Persist(bm *BomMeta, b *Bom, version ShortName) error
 	ListBoms(user ShortName) ([]BomMeta, error)
 }
 
@@ -40,24 +40,24 @@ func OpenJSONFileBomStore(fpath string) (*JSONFileBomStore, error) {
 
 func (jfbs *JSONFileBomStore) GetBomMeta(user, name ShortName) (*BomMeta, error) {
 	fpath := jfbs.Rootfpath + "/" + string(user) + "/" + string(name) + "/_meta.json"
-	bs := BomMeta{}
-	if err := readJsonBomMeta(fpath, &bs); err != nil {
+	bm := BomMeta{}
+	if err := readJsonBomMeta(fpath, &bm); err != nil {
 		return nil, err
 	}
-	return &bs, nil
+	return &bm, nil
 }
 
 func (jfbs *JSONFileBomStore) GetHead(user, name ShortName) (*BomMeta, *Bom, error) {
-	bs, err := jfbs.GetBomMeta(user, name)
+	bm, err := jfbs.GetBomMeta(user, name)
 	if err != nil {
 		return nil, nil, err
 	}
-	version := bs.HeadVersion
+	version := bm.HeadVersion
 	if version == "" {
 		log.Fatal("Tried to read undefined HEAD for " + string(user) + "/" + string(name))
 	}
 	b, err := jfbs.GetBom(user, name, ShortName(version))
-	return bs, b, err
+	return bm, b, err
 }
 
 func (jfbs *JSONFileBomStore) GetBom(user, name, version ShortName) (*Bom, error) {
@@ -79,7 +79,7 @@ func (jfbs *JSONFileBomStore) ListBoms(user ShortName) ([]BomMeta, error) {
 		log.Fatal(err)
 	}
 	defer rootDir.Close()
-	bsList := []BomMeta{}
+	bmList := []BomMeta{}
 	dirInfo, err := rootDir.Readdir(0)
 	for _, node := range dirInfo {
 		if !node.IsDir() || !isShortName(node.Name()) {
@@ -89,19 +89,19 @@ func (jfbs *JSONFileBomStore) ListBoms(user ShortName) ([]BomMeta, error) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		bsList = append(bsList, uList...)
+		bmList = append(bmList, uList...)
 	}
-	return bsList, nil
+	return bmList, nil
 }
 
 func (jfbs *JSONFileBomStore) listBomsForUser(user ShortName) ([]BomMeta, error) {
-	bsList := []BomMeta{}
+	bmList := []BomMeta{}
 	uDirPath := jfbs.Rootfpath + "/" + string(user)
 	uDir, err := os.Open(uDirPath)
 	if err != nil {
 		if e, ok := err.(*os.PathError); ok && e.Err.Error() == "no such file or directory" {
 			// XXX: should probably check for a specific syscall error? same below
-			return bsList, nil
+			return bmList, nil
 		}
 		return nil, err
 	}
@@ -115,36 +115,36 @@ func (jfbs *JSONFileBomStore) listBomsForUser(user ShortName) ([]BomMeta, error)
 			continue
 		}
 		fpath := jfbs.Rootfpath + "/" + string(user) + "/" + node.Name() + "/_meta.json"
-		bs := BomMeta{}
-		if err := readJsonBomMeta(fpath, &bs); err != nil {
+		bm := BomMeta{}
+		if err := readJsonBomMeta(fpath, &bm); err != nil {
 			if e, ok := err.(*os.PathError); ok && e.Err.Error() == "no such file or directory" {
 				// no _meta.json in there
 				continue
 			}
 			return nil, err
 		}
-		bsList = append(bsList, bs)
+		bmList = append(bmList, bm)
 	}
-	return bsList, nil
+	return bmList, nil
 }
 
-func (jfbs *JSONFileBomStore) Persist(bs *BomMeta, b *Bom, version ShortName) error {
+func (jfbs *JSONFileBomStore) Persist(bm *BomMeta, b *Bom, version ShortName) error {
 
-	if err := bs.Validate(); err != nil {
+	if err := bm.Validate(); err != nil {
 		return err
 	}
 	if err := b.Validate(); err != nil {
 		return err
 	}
 
-	b_fpath := jfbs.Rootfpath + "/" + string(bs.Owner) + "/" + string(bs.Name) + "/" + string(version) + ".json"
-	bs_fpath := jfbs.Rootfpath + "/" + string(bs.Owner) + "/" + string(bs.Name) + "/_meta.json"
+	b_fpath := jfbs.Rootfpath + "/" + string(bm.Owner) + "/" + string(bm.Name) + "/" + string(version) + ".json"
+	bm_fpath := jfbs.Rootfpath + "/" + string(bm.Owner) + "/" + string(bm.Name) + "/_meta.json"
 
 	if f, err := os.Open(b_fpath); err == nil {
 		f.Close()
 		return Error("bom with same owner, name, and version already exists")
 	}
-	if err := writeJsonBomMeta(bs_fpath, bs); err != nil {
+	if err := writeJsonBomMeta(bm_fpath, bm); err != nil {
 		log.Fatal(err)
 	}
 	if err := writeJsonBom(b_fpath, b); err != nil {
@@ -153,20 +153,20 @@ func (jfbs *JSONFileBomStore) Persist(bs *BomMeta, b *Bom, version ShortName) er
 	return nil
 }
 
-func readJsonBomMeta(fpath string, bs *BomMeta) error {
+func readJsonBomMeta(fpath string, bm *BomMeta) error {
 	f, err := os.Open(path.Clean(fpath))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	dec := json.NewDecoder(f)
-	if err = dec.Decode(&bs); err != nil {
+	if err = dec.Decode(&bm); err != nil {
 		return err
 	}
 	return nil
 }
 
-func writeJsonBomMeta(fpath string, bs *BomMeta) error {
+func writeJsonBomMeta(fpath string, bm *BomMeta) error {
 	err := os.MkdirAll(path.Dir(fpath), os.ModePerm|os.ModeDir)
 	if err != nil && !os.IsExist(err) {
 		return err
@@ -177,7 +177,7 @@ func writeJsonBomMeta(fpath string, bs *BomMeta) error {
 	}
 	defer f.Close()
 	enc := json.NewEncoder(f)
-	if err = enc.Encode(&bs); err != nil {
+	if err = enc.Encode(&bm); err != nil {
 		return err
 	}
 	return nil

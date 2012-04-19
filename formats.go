@@ -20,20 +20,20 @@ type BomContainer struct {
 
 // --------------------- text (CLI only ) -----------------------
 
-func DumpBomAsText(bs *BomMeta, b *Bom, out io.Writer) {
+func DumpBomAsText(bm *BomMeta, b *Bom, out io.Writer) {
 	fmt.Fprintln(out)
-	fmt.Fprintf(out, "Name:\t\t%s\n", bs.Name)
+	fmt.Fprintf(out, "Name:\t\t%s\n", bm.Name)
 	fmt.Fprintf(out, "Version:\t%s\n", b.Version)
-	fmt.Fprintf(out, "Creator:\t%s\n", bs.Owner)
+	fmt.Fprintf(out, "Creator:\t%s\n", bm.Owner)
 	fmt.Fprintf(out, "Timestamp:\t%s\n", b.Created)
-	if bs.Homepage != "" {
-		fmt.Fprintf(out, "Homepage:\t%s\n", bs.Homepage)
+	if bm.Homepage != "" {
+		fmt.Fprintf(out, "Homepage:\t%s\n", bm.Homepage)
 	}
 	if b.Progeny != "" {
 		fmt.Fprintf(out, "Source:\t\t%s\n", b.Progeny)
 	}
-	if bs.Description != "" {
-		fmt.Fprintf(out, "Description:\t%s\n", bs.Description)
+	if bm.Description != "" {
+		fmt.Fprintf(out, "Description:\t%s\n", bm.Description)
 	}
 	fmt.Println()
 	// "by line item"
@@ -95,9 +95,9 @@ func LoadBomFromCSV(out io.Writer) (*Bom, error) {
 
 // --------------------- JSON -----------------------
 
-func DumpBomAsJSON(bs *BomMeta, b *Bom, out io.Writer) {
+func DumpBomAsJSON(bm *BomMeta, b *Bom, out io.Writer) {
 
-	container := &BomContainer{BomMetadata: bs, Bom: b}
+	container := &BomContainer{BomMetadata: bm, Bom: b}
 
 	enc := json.NewEncoder(out)
 	if err := enc.Encode(&container); err != nil {
@@ -118,9 +118,9 @@ func LoadBomFromJSON(input io.Reader) (*BomMeta, *Bom, error) {
 
 // --------------------- XML -----------------------
 
-func DumpBomAsXML(bs *BomMeta, b *Bom, out io.Writer) {
+func DumpBomAsXML(bm *BomMeta, b *Bom, out io.Writer) {
 
-	container := &BomContainer{BomMetadata: bs, Bom: b}
+	container := &BomContainer{BomMetadata: bm, Bom: b}
 	enc := xml.NewEncoder(out)
 
 	// generic XML header
