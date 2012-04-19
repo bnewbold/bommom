@@ -211,7 +211,7 @@ func dumpCmd() {
 
 func loadCmd() {
 	if flag.NArg() != 5 {
-		log.Fatal("Error: wrong number of arguments (expected input file, username, bomname)")
+		log.Fatal("Error: wrong number of arguments (expected input file, username, bomname, version)")
 	}
 
 	var userName, bomName, version string
@@ -234,10 +234,13 @@ func loadCmd() {
 	bm.Name = bomName
 	b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
 	b.Created = time.Now()
+    b.Version = version
 
 	openBomStore()
 
-	bomstore.Persist(bm, b, ShortName(version))
+	if err := bomstore.Persist(bm, b, ShortName(version)); err != nil {
+        log.Fatal(err)
+    }
 }
 
 func convertCmd() {

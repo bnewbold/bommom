@@ -130,6 +130,8 @@ func (jfbs *JSONFileBomStore) listBomsForUser(user ShortName) ([]BomMeta, error)
 
 func (jfbs *JSONFileBomStore) Persist(bm *BomMeta, b *Bom, version ShortName) error {
 
+    b.Version = string(version)
+    bm.HeadVersion = string(version)
 	if err := bm.Validate(); err != nil {
 		return err
 	}

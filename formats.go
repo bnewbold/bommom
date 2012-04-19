@@ -10,6 +10,7 @@ import (
 	"io"
 	"log"
 	"strings"
+    "strconv"
 )
 
 // This compound container struct is useful for serializing to XML and JSON
@@ -86,10 +87,74 @@ func DumpBomAsCSV(b *Bom, out io.Writer) {
 	}
 }
 
-func LoadBomFromCSV(out io.Writer) (*Bom, error) {
+func LoadBomFromCSV(input io.Reader) (*Bom, error) {
 
-	b := Bom{}
+	b := Bom{LineItems: []LineItem{} }
+    reader := csv.NewReader(input) 
+    reader.TrailingComma = true
+    reader.TrimLeadingSpace = true
 
+    header, err := reader.Read()
+    if err != nil {
+        log.Fatal(err)
+    }
+    var li *LineItem
+    var el_count int
+    var records []string
+    var qty string
+    for records, err = reader.Read(); err == nil; records, err = reader.Read() {
+        qty = ""
+        li = &LineItem{Elements: []string{}}
+        for i, col := range header {
+            switch strings.ToLower(col) {
+                case "qty", "quantity":
+                    qty = strings.TrimSpace(records[i])
+                case "mpn", "manufacturer part number":
+                    li.Mpn = strings.TrimSpace(records[i])
+                case "mfg", "manufacturer":
+                    li.Manufacturer = strings.TrimSpace(records[i])
+                case "symbol", "symbols":
+                    for _, symb := range strings.Split(records[i], ",") {
+                        symb = strings.TrimSpace(symb)
+                        if !isShortName(symb) {
+                            li.Elements = append(li.Elements, symb)
+                        } else if *verbose {
+                            log.Println("symbol not a ShortName, skipped: " + symb)
+                        }
+                    }
+                case "description", "function":
+                    li.Description = strings.TrimSpace(records[i])
+                case "comment", "comments":
+                    li.Comment = strings.TrimSpace(records[i])
+                default:
+                    // pass, no assignment
+            }
+        }
+        if qty != "" {
+            if n, err := strconv.Atoi(qty); err == nil && n >= 0 {
+                el_count = len(li.Elements)
+                // XXX: kludge, should handle this better
+                if n > 99999 || el_count > 99999 {
+                    log.Fatal("too large a quantity of elements passed, crashing")
+                } else if el_count > n {
+                    if *verbose {
+                        log.Println("more symbols than qty, taking all symbols")
+                    }
+                } else if el_count < n {
+                    for j := 0; j < (n - el_count); j++ {
+                        li.Elements = append(li.Elements, "")
+                    }
+                }
+            } 
+        }
+        if len(li.Elements) == 0 {
+            li.Elements = []string{"", }
+        }
+        b.LineItems = append(b.LineItems, *li)
+    }
+    if err.Error() != "EOF" {
+        log.Fatal(err)
+    }
 	return &b, nil
 }
 
