@@ -41,7 +41,7 @@ type BomMeta struct {
 	Owner        string `json:"owner_name"`
 	Description  string `json:"description"`
 	HeadVersion  string `json:"head_version"`
-	Homepage     *Url   `json:"homepage_url"`
+	Homepage     Url    `json:"homepage_url"`
 	IsPublicView bool   `json:"is_publicview",omitempty`
 	IsPublicEdit bool   `json:"is_publicedit",omitempty`
 }
@@ -81,7 +81,7 @@ func (b *Bom) Validate() error {
 	if !isShortName(b.Version) {
 		return Error("version not a ShortName: \"" + b.Version + "\"")
 	}
-	if &b.Created == nil {
+	if b.Created.IsZero() {
 		return Error("created timestamp not defined")
 	}
 	return nil

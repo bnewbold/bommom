@@ -12,14 +12,28 @@ import (
 	"strings"
 )
 
+// This compound container struct is useful for serializing to XML and JSON
+type BomContainer struct {
+	BomMetadata *BomMeta `json:"metadata"`
+	Bom         *Bom     `json:"bom"`
+}
+
 // --------------------- text (CLI only ) -----------------------
 
 func DumpBomAsText(bs *BomMeta, b *Bom, out io.Writer) {
 	fmt.Fprintln(out)
-	fmt.Fprintf(out, "%s (version %s, created %s)\n", bs.Name, b.Version, b.Created)
-	fmt.Fprintf(out, "Creator: %s\n", bs.Owner)
+	fmt.Fprintf(out, "Name:\t\t%s\n", bs.Name)
+	fmt.Fprintf(out, "Version:\t%s\n", b.Version)
+	fmt.Fprintf(out, "Creator:\t%s\n", bs.Owner)
+	fmt.Fprintf(out, "Timestamp:\t%s\n", b.Created)
+	if bs.Homepage != "" {
+		fmt.Fprintf(out, "Homepage:\t%s\n", bs.Homepage)
+	}
+	if b.Progeny != "" {
+		fmt.Fprintf(out, "Source:\t\t%s\n", b.Progeny)
+	}
 	if bs.Description != "" {
-		fmt.Fprintf(out, "Description: %s\n", bs.Description)
+		fmt.Fprintf(out, "Description:\t%s\n", bs.Description)
 	}
 	fmt.Println()
 	// "by line item"
@@ -83,65 +97,46 @@ func LoadBomFromCSV(out io.Writer) (*Bom, error) {
 
 func DumpBomAsJSON(bs *BomMeta, b *Bom, out io.Writer) {
 
-	obj := map[string]interface{}{
-		"bom_meta": bs,
-		"bom":      b,
-	}
+	container := &BomContainer{BomMetadata: bs, Bom: b}
 
 	enc := json.NewEncoder(out)
-	if err := enc.Encode(&obj); err != nil {
+	if err := enc.Encode(&container); err != nil {
 		log.Fatal(err)
 	}
 }
 
 func LoadBomFromJSON(input io.Reader) (*BomMeta, *Bom, error) {
 
-	bs := &BomMeta{}
-	b := &Bom{}
-
-	obj := map[string]interface{}{
-		"bom_meta": &bs,
-		"bom":      &b,
-	}
-
-	fmt.Println(obj)
+	container := &BomContainer{}
 
 	enc := json.NewDecoder(input)
-	if err := enc.Decode(&obj); err != nil {
+	if err := enc.Decode(&container); err != nil {
 		log.Fatal(err)
 	}
-	if &bs == nil || &b == nil {
-		log.Fatal("didn't load successfully")
-	}
-	fmt.Println(bs)
-	fmt.Println(b)
-	return bs, b, nil
+	return container.BomMetadata, container.Bom, nil
 }
 
 // --------------------- XML -----------------------
 
 func DumpBomAsXML(bs *BomMeta, b *Bom, out io.Writer) {
 
+	container := &BomContainer{BomMetadata: bs, Bom: b}
 	enc := xml.NewEncoder(out)
-	if err := enc.Encode(bs); err != nil {
-		log.Fatal(err)
-	}
-	if err := enc.Encode(b); err != nil {
+
+	// generic XML header
+	io.WriteString(out, xml.Header)
+
+	if err := enc.Encode(container); err != nil {
 		log.Fatal(err)
 	}
 }
 
 func LoadBomFromXML(input io.Reader) (*BomMeta, *Bom, error) {
 
-	bs := BomMeta{}
-	b := Bom{}
-
+	container := &BomContainer{}
 	enc := xml.NewDecoder(input)
-	if err := enc.Decode(&bs); err != nil {
+	if err := enc.Decode(&container); err != nil {
 		log.Fatal(err)
 	}
-	if err := enc.Decode(&b); err != nil {
-		log.Fatal(err)
-	}
-	return &bs, &b, nil
+	return container.BomMetadata, container.Bom, nil
 }

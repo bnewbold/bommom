@@ -258,8 +258,13 @@ func convertCmd() {
 	}
 	if inFormat == "csv" && bs == nil {
 		// TODO: from inname? if ShortName?
-		bs = &BomMeta{Name: "untitled", Owner: anonUser.name}
+		bs = &BomMeta{Name: "untitled",
+			Owner: anonUser.name}
+		b.Version = "unversioned"
 	}
+
+	b.Created = time.Now()
+	b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
 
 	if err := bs.Validate(); err != nil {
 		log.Fatal("loaded bommeta not valid: " + err.Error())
