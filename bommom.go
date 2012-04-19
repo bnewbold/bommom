@@ -3,17 +3,18 @@ package main
 // CLI for bommom tools. Also used to launch web interface.
 
 import (
-	"encoding/csv"
-	"encoding/json"
-	"encoding/xml"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
-	"path"
-	"strings"
+    "path"
 )
+
+// Globals
+var bomstore BomStore
+var auth AuthService
+var anonUser = &User{name: "common"}
 
 // Command line flags
 var (
@@ -61,16 +62,20 @@ func main() {
 	}
 }
 
+func openBomStore() {
+
+}
+
 func initCmd() {
-	jfbs, err := NewJSONFileBomStore(*fileStorePath)
+	err := NewJSONFileBomStore(*fileStorePath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	jfbs, err = OpenJSONFileBomStore(*fileStorePath)
+	bomstore, err = OpenJSONFileBomStore(*fileStorePath)
 	if err != nil {
 		log.Fatal(err)
 	}
-	bs, err := jfbs.GetStub(ShortName("common"), ShortName("gizmo"))
+	bs, err := bomstore.GetStub(ShortName("common"), ShortName("gizmo"))
 	if err == nil {
 		// dummy BomStub already exists?
 		return
@@ -83,7 +88,7 @@ func initCmd() {
 		HeadVersion:  b.Version,
 		IsPublicView: true,
 		IsPublicEdit: true}
-	jfbs.Persist(bs, b, "v001")
+	bomstore.Persist(bs, b, "v001")
 }
 
 func dumpCmd() {
@@ -122,14 +127,15 @@ func dumpCmd() {
 		log.Fatal("Error: not valid ShortName: " + userStr +
 			" and/or " + nameStr)
 	}
-	jfbs, err := OpenJSONFileBomStore(*fileStorePath)
+    var err error
+	bomstore, err = OpenJSONFileBomStore(*fileStorePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if auth == nil {
 		auth = DummyAuth(true)
 	}
-	bs, b, err := jfbs.GetHead(ShortName(userStr), ShortName(nameStr))
+	bs, b, err := bomstore.GetHead(ShortName(userStr), ShortName(nameStr))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -140,7 +146,7 @@ func dumpCmd() {
 	case "json":
 		DumpBomAsJSON(bs, b, outFile)
 	case "csv":
-		DumpBomAsCSV(bs, b, outFile)
+		DumpBomAsCSV(b, outFile)
 	case "xml":
 		DumpBomAsXML(bs, b, outFile)
 	default:
@@ -149,7 +155,7 @@ func dumpCmd() {
 }
 
 func listCmd() {
-	jfbs, err := OpenJSONFileBomStore(*fileStorePath)
+	bomstore, err := OpenJSONFileBomStore(*fileStorePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -162,14 +168,14 @@ func listCmd() {
 		if !isShortName(name) {
 			log.Fatal("Error: not a possible username: " + name)
 		}
-		bomStubs, err = jfbs.ListBoms(ShortName(name))
+		bomStubs, err = bomstore.ListBoms(ShortName(name))
 		if err != nil {
 			log.Fatal(err)
 		}
 	} else {
 		// list all boms from all names
 		// TODO: ERROR
-		bomStubs, err = jfbs.ListBoms("")
+		bomStubs, err = bomstore.ListBoms("")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -182,8 +188,8 @@ func listCmd() {
 func printUsage() {
 	fmt.Println("bommom is a tool for managing and publishing electronics BOMs")
 	fmt.Println("")
-	fmt.Println("Usage:")
-	fmt.Println("\tbommom command [options]")
+	fmt.Println("Usage (flags must go first?):")
+	fmt.Println("\tbommom [options] command [arguments]")
 	fmt.Println("")
 	fmt.Println("Commands:")
 	fmt.Println("")
@@ -199,91 +205,3 @@ func printUsage() {
 	flag.PrintDefaults()
 }
 
-// -------- conversion/dump/load routines
-
-func DumpBomAsText(bs *BomStub, b *Bom, out io.Writer) {
-	fmt.Fprintln(out)
-	fmt.Fprintf(out, "%s (version %s, created %s)\n", bs.Name, b.Version, b.Created)
-	fmt.Fprintf(out, "Creator: %s\n", bs.Owner)
-	if bs.Description != "" {
-		fmt.Fprintf(out, "Description: %s\n", bs.Description)
-	}
-	fmt.Println()
-	// "by line item"
-	fmt.Fprintf(out, "tag\tqty\tmanufacturer\tmpn\t\tdescription\t\tcomment\n")
-	for _, li := range b.LineItems {
-		fmt.Fprintf(out, "%s\t%d\t%s\t%s\t\t%s\t\t%s\n",
-			li.Tag,
-			len(li.Elements),
-			li.Manufacturer,
-			li.Mpn,
-			li.Description,
-			li.Comment)
-	}
-	/* // "by circuit element"
-	   fmt.Fprintf(out, "tag\tsymbol\tmanufacturer\tmpn\t\tdescription\t\tcomment\n")
-	   for _, li := range b.LineItems {
-	       for _, elm := range li.Elements {
-	           fmt.Fprintf(out, "%s\t%s\t%s\t%s\t\t%s\t\t%s\n",
-	                      li.Tag,
-	                      elm,
-	                      li.Manufacturer,
-	                      li.Mpn,
-	                      li.Description,
-	                      li.Comment)
-	       }
-	   }
-	*/
-}
-
-func DumpBomAsCSV(bs *BomStub, b *Bom, out io.Writer) {
-	dumper := csv.NewWriter(out)
-	defer dumper.Flush()
-	// "by line item"
-	dumper.Write([]string{"qty",
-		"symbols",
-		"manufacturer",
-		"mpn",
-		"description",
-		"comment"})
-	for _, li := range b.LineItems {
-		dumper.Write([]string{
-			fmt.Sprint(len(li.Elements)),
-			strings.Join(li.Elements, ","),
-			li.Manufacturer,
-			li.Mpn,
-			li.Description,
-			li.Comment})
-	}
-}
-
-func DumpBomAsJSON(bs *BomStub, b *Bom, out io.Writer) {
-
-	obj := map[string]interface{}{
-		"bom_meta": bs,
-		"bom":      b,
-	}
-
-	enc := json.NewEncoder(out)
-	if err := enc.Encode(&obj); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func DumpBomAsXML(bs *BomStub, b *Bom, out io.Writer) {
-
-	/*
-	   obj := map[string] interface{} {
-	       "BomMeta": bs,
-	       "Bom": b, 
-	   }
-	*/
-
-	enc := xml.NewEncoder(out)
-	if err := enc.Encode(bs); err != nil {
-		log.Fatal(err)
-	}
-	if err := enc.Encode(b); err != nil {
-		log.Fatal(err)
-	}
-}

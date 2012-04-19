@@ -1,9 +1,5 @@
 package main
 
-// Authentication globals
-var auth AuthService
-var anonUser = &User{name: "common"}
-
 // Basic registered user account structure, for permissions etc.
 type User struct {
 	// TODO: more specific types for these

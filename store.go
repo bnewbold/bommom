@@ -7,15 +7,13 @@ import (
 	"path"
 )
 
-var bomstore BomStore
-
 // TODO: who owns returned BOMs? Caller? need "free" methods?
 type BomStore interface {
 	GetStub(user, name ShortName) (*BomStub, error)
-	GetHead(user, name ShortName) (*Bom, error)
+	GetHead(user, name ShortName) (*BomStub, *Bom, error)
 	GetBom(user, name, version ShortName) (*Bom, error)
 	Persist(bs *BomStub, b *Bom, version ShortName) error
-	ListBoms(user ShortName) (*Bom, error)
+	ListBoms(user ShortName) ([]BomStub, error)
 }
 
 // Basic BomStore backend using a directory structure of JSON files saved to
@@ -24,12 +22,12 @@ type JSONFileBomStore struct {
 	Rootfpath string
 }
 
-func NewJSONFileBomStore(fpath string) (*JSONFileBomStore, error) {
+func NewJSONFileBomStore(fpath string) error {
 	err := os.MkdirAll(fpath, os.ModePerm|os.ModeDir)
 	if err != nil && !os.IsExist(err) {
-		return nil, err
+		return err
 	}
-	return &JSONFileBomStore{Rootfpath: fpath}, nil
+	return nil
 }
 
 func OpenJSONFileBomStore(fpath string) (*JSONFileBomStore, error) {
