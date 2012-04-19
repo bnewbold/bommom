@@ -8,8 +8,8 @@ import (
 	"io"
 	"log"
 	"os"
-    "path"
-    "time"
+	"path"
+	"time"
 )
 
 // Globals
@@ -69,8 +69,8 @@ func main() {
 }
 
 func openBomStore() {
-    // defaults to JSON file store
-    var err error
+	// defaults to JSON file store
+	var err error
 	bomstore, err = OpenJSONFileBomStore(*fileStorePath)
 	if err != nil {
 		log.Fatal(err)
@@ -79,9 +79,9 @@ func openBomStore() {
 
 func dumpOut(fname string, bs *BomStub, b *Bom) {
 	var outFile io.Writer
-    if fname == "" {
-        outFile = os.Stdout
-    } else {
+	if fname == "" {
+		outFile = os.Stdout
+	} else {
 		// if no outFormat defined, infer from file extension
 		if *outFormat == "" {
 			switch ext := path.Ext(fname); ext {
@@ -122,24 +122,24 @@ func dumpOut(fname string, bs *BomStub, b *Bom) {
 
 func loadIn(fname string) (bs *BomStub, b *Bom) {
 
-    if inFormat == "" {
-        switch ext := path.Ext(fname); ext {
-        case ".json", ".JSON":
-            inFormat = "json"
-        case ".csv", ".CSV":
-            inFormat = "csv"
-        case ".xml", ".XML":
-            inFormat = "xml"
-        default:
-            log.Fatal("Unknown file extention (use -format): " + ext)
-        }
-    }
+	if inFormat == "" {
+		switch ext := path.Ext(fname); ext {
+		case ".json", ".JSON":
+			inFormat = "json"
+		case ".csv", ".CSV":
+			inFormat = "csv"
+		case ".xml", ".XML":
+			inFormat = "xml"
+		default:
+			log.Fatal("Unknown file extention (use -format): " + ext)
+		}
+	}
 
-    infile, err := os.Open(fname)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer infile.Close()
+	infile, err := os.Open(fname)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer infile.Close()
 
 	switch inFormat {
 	case "json":
@@ -151,15 +151,15 @@ func loadIn(fname string) (bs *BomStub, b *Bom) {
 	default:
 		log.Fatal("Error: unknown/unimplemented format: " + *outFormat)
 	}
-    if err != nil {
-        log.Fatal(err)
-    }
-    return bs, b
+	if err != nil {
+		log.Fatal(err)
+	}
+	return bs, b
 }
 
 func initCmd() {
-    
-    openBomStore()
+
+	openBomStore()
 	bs, err := bomstore.GetStub(ShortName("common"), ShortName("gizmo"))
 	if err == nil {
 		// dummy BomStub already exists?
@@ -189,14 +189,14 @@ func dumpCmd() {
 			" and/or " + nameStr)
 	}
 
-    var fname string
-    if flag.NArg() == 4 {
-        fname = flag.Arg(3)
-    } else {
-        fname = ""
-    }
+	var fname string
+	if flag.NArg() == 4 {
+		fname = flag.Arg(3)
+	} else {
+		fname = ""
+	}
 
-    openBomStore()
+	openBomStore()
 
 	if auth == nil {
 		auth = DummyAuth(true)
@@ -206,44 +206,43 @@ func dumpCmd() {
 		log.Fatal(err)
 	}
 
-    dumpOut(fname, bs, b)
+	dumpOut(fname, bs, b)
 }
 
 func loadCmd() {
 
-    var userName, bomName, version string
-    if flag.NArg() == 4 {
-        userName = anonUser.name
-        bomName = flag.Arg(2)
-        version = flag.Arg(3)
-    } else if flag.NArg() == 5 {
-        userName = flag.Arg(2)
-        bomName = flag.Arg(3)
-        version = flag.Arg(4)
-    } else {
+	var userName, bomName, version string
+	if flag.NArg() == 4 {
+		userName = anonUser.name
+		bomName = flag.Arg(2)
+		version = flag.Arg(3)
+	} else if flag.NArg() == 5 {
+		userName = flag.Arg(2)
+		bomName = flag.Arg(3)
+		version = flag.Arg(4)
+	} else {
 		log.Fatal("Error: wrong number of arguments (expected input file, optional username, bomname)")
-    }
+	}
 	inFname := flag.Arg(1)
 
-    if !(isShortName(userName) && isShortName(bomName) && isShortName(version)) {
-        log.Fatal("user, name, and version must be ShortNames")
-    }
+	if !(isShortName(userName) && isShortName(bomName) && isShortName(version)) {
+		log.Fatal("user, name, and version must be ShortNames")
+	}
 
+	bs, b := loadIn(inFname)
+	if inFormat == "csv" && bs == nil {
+		// TODO: from inname? if ShortName?
+		bs = &BomStub{}
+	}
 
-    bs, b := loadIn(inFname)
-    if inFormat == "csv" && bs == nil {
-        // TODO: from inname? if ShortName?
-        bs = &BomStub{}
-    }
+	bs.Owner = userName
+	bs.Name = bomName
+	b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
+	b.Created = time.Now()
 
-    bs.Owner = userName
-    bs.Name = bomName
-    b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
-    b.Created = time.Now()
+	openBomStore()
 
-    openBomStore()
-
-    bomstore.Persist(bs, b, ShortName(version))
+	bomstore.Persist(bs, b, ShortName(version))
 }
 
 func convertCmd() {
@@ -251,37 +250,37 @@ func convertCmd() {
 		log.Fatal("Error: wrong number of arguments (expected input and output files)")
 	}
 
-    // should refactor this to open both files first, then do processing? not
-    // sure what best practice is.
+	// should refactor this to open both files first, then do processing? not
+	// sure what best practice is.
 
 	inFname := flag.Arg(1)
 	outFname := flag.Arg(2)
 
-    bs, b := loadIn(inFname)
+	bs, b := loadIn(inFname)
 
-    if b == nil {
-        log.Fatal("null bom")
-    }
-    if inFormat == "csv" && bs == nil {
-        // TODO: from inname? if ShortName?
-        bs = &BomStub{Name: "untitled", Owner: anonUser.name}
-    }
-    
-    if err := bs.Validate(); err != nil {
-        log.Fatal("loaded bomstub not valid: " + err.Error())
-    }
-    if err := b.Validate(); err != nil {
-        log.Fatal("loaded bom not valid: " + err.Error())
-    }
+	if b == nil {
+		log.Fatal("null bom")
+	}
+	if inFormat == "csv" && bs == nil {
+		// TODO: from inname? if ShortName?
+		bs = &BomStub{Name: "untitled", Owner: anonUser.name}
+	}
 
-    dumpOut(outFname, bs, b)
+	if err := bs.Validate(); err != nil {
+		log.Fatal("loaded bomstub not valid: " + err.Error())
+	}
+	if err := b.Validate(); err != nil {
+		log.Fatal("loaded bom not valid: " + err.Error())
+	}
+
+	dumpOut(outFname, bs, b)
 }
 
 func listCmd() {
 
-    openBomStore()
+	openBomStore()
 	var bomStubs []BomStub
-    var err error
+	var err error
 	if flag.NArg() > 2 {
 		log.Fatal("Error: too many arguments...")
 	}
@@ -326,4 +325,3 @@ func printUsage() {
 	fmt.Println("")
 	flag.PrintDefaults()
 }
-

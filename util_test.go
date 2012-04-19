@@ -16,8 +16,8 @@ var noShort = []string{
 	"AS_DF",
 	"2o45",
 	"as.12df",
-    "5",
-    "",
+	"5",
+	"",
 }
 
 func TestIsShortName(t *testing.T) {

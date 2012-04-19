@@ -78,23 +78,23 @@ func (b *Bom) AddLineItem(li *LineItem) error {
 }
 
 func (b *Bom) Validate() error {
-    if !isShortName(b.Version) {
-        return Error("version not a ShortName: \"" + b.Version + "\"")
-    }
-    if &b.Created == nil {
-        return Error("created timestamp not defined")
-    }
-    return nil
+	if !isShortName(b.Version) {
+		return Error("version not a ShortName: \"" + b.Version + "\"")
+	}
+	if &b.Created == nil {
+		return Error("created timestamp not defined")
+	}
+	return nil
 }
 
 func (bs *BomStub) Validate() error {
-    if !isShortName(bs.Name) {
-        return Error("name not a ShortName: \"" + bs.Name + "\"")
-    }
-    if !isShortName(bs.Owner) {
-        return Error("owner name not a ShortName: \"" + bs.Owner + "\"")
-    }
-    return nil
+	if !isShortName(bs.Name) {
+		return Error("name not a ShortName: \"" + bs.Name + "\"")
+	}
+	if !isShortName(bs.Owner) {
+		return Error("owner name not a ShortName: \"" + bs.Owner + "\"")
+	}
+	return nil
 }
 
 // ---------- testing

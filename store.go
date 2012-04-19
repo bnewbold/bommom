@@ -130,20 +130,20 @@ func (jfbs *JSONFileBomStore) listBomsForUser(user ShortName) ([]BomStub, error)
 
 func (jfbs *JSONFileBomStore) Persist(bs *BomStub, b *Bom, version ShortName) error {
 
-    if err := bs.Validate(); err != nil {
-        return err
-    }
-    if err := b.Validate(); err != nil {
-        return err
-    }
-    
+	if err := bs.Validate(); err != nil {
+		return err
+	}
+	if err := b.Validate(); err != nil {
+		return err
+	}
+
 	b_fpath := jfbs.Rootfpath + "/" + string(bs.Owner) + "/" + string(bs.Name) + "/" + string(version) + ".json"
 	bs_fpath := jfbs.Rootfpath + "/" + string(bs.Owner) + "/" + string(bs.Name) + "/_meta.json"
-    
-    if f, err := os.Open(b_fpath); err == nil {
-        f.Close()
-        return Error("bom with same owner, name, and version already exists")
-    }
+
+	if f, err := os.Open(b_fpath); err == nil {
+		f.Close()
+		return Error("bom with same owner, name, and version already exists")
+	}
 	if err := writeJsonBomStub(bs_fpath, bs); err != nil {
 		log.Fatal(err)
 	}
