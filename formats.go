@@ -76,24 +76,6 @@ func LoadBomFromCSV(out io.Writer) (*Bom, error) {
 
     b := Bom{}
 
-	dumper := csv.NewWriter(out)
-	defer dumper.Flush()
-	// "by line item"
-	dumper.Write([]string{"qty",
-		"symbols",
-		"manufacturer",
-		"mpn",
-		"description",
-		"comment"})
-	for _, li := range b.LineItems {
-		dumper.Write([]string{
-			fmt.Sprint(len(li.Elements)),
-			strings.Join(li.Elements, ","),
-			li.Manufacturer,
-			li.Mpn,
-			li.Description,
-			li.Comment})
-	}
     return &b, nil
 }
 
@@ -148,10 +130,10 @@ func LoadBomFromXML(input io.Reader) (*BomStub, *Bom, error) {
     b := Bom{}
 
 	enc := xml.NewDecoder(input)
-	if err := enc.Decode(bs); err != nil {
+	if err := enc.Decode(&bs); err != nil {
 		log.Fatal(err)
 	}
-	if err := enc.Decode(b); err != nil {
+	if err := enc.Decode(&b); err != nil {
 		log.Fatal(err)
 	}
     return &bs, &b, nil

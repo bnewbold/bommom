@@ -10,7 +10,7 @@
 
 BomMom: A web publishing/wiki system for electronics Bill of Materials (BOM) 
 
-A work in progress as of early April 2012.
+A work in progress as of April 2012.
 
 ### Instructions
 
@@ -19,10 +19,10 @@ Install golang compiler and run `go build` in this directory, then run the
 
 ### Intended Initial Features
 
- - SQL-backed datastore for BOMs and web authentication
  - file-backed datastore for BOMs
- - import/export to .csv and JSON
+ - import/export to CSV, JSON, and XML formats
  - Octopart API price fetching
+ - SQL-backed datastore for BOMs and web authentication
 
 ### Potential Later Features
 
@@ -32,7 +32,7 @@ Install golang compiler and run `go build` in this directory, then run the
  - REST API
  - git-backed BomStore
  - git post-commit hooks and/or github integration
- - plugins for CAD software (Eagle, KiCad, etc)
+ - plugins and file format support for CAD software (Eagle, KiCad, etc)
  - Amazon, McMaster, eBay, Ali Baba, etc, price fetching
  - "Standard"/"Estimate" pricing modules for PCBs, assembly, etc
  - "sub-BOM" feature a la git sub-repositories

@@ -23,6 +23,7 @@ var (
 	verbose       = flag.Bool("verbose", false, "print extra info")
 	helpFlag      = flag.Bool("help", false, "print full help info")
 	outFormat     = flag.String("format", "", "command output format (for 'dump' etc)")
+	inFormat      = ""
 )
 
 func main() {
@@ -50,31 +51,112 @@ func main() {
 	switch flag.Arg(0) {
 	default:
 		log.Fatal("Error: unknown command: ", flag.Arg(0))
-	case "load", "serve", "convert":
+	case "load", "serve":
 		log.Fatal("Error: Unimplemented, sorry")
 	case "init":
 		log.Println("Initializing...")
 		initCmd()
 	case "dump":
 		dumpCmd()
+	case "convert":
+		convertCmd()
 	case "list":
 		listCmd()
 	}
 }
 
 func openBomStore() {
-
-}
-
-func initCmd() {
-	err := NewJSONFileBomStore(*fileStorePath)
-	if err != nil {
-		log.Fatal(err)
-	}
+    // defaults to JSON file store
+    var err error
 	bomstore, err = OpenJSONFileBomStore(*fileStorePath)
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func dumpOut(fname string, bs *BomStub, b *Bom) {
+	var outFile io.Writer
+    if fname == "" {
+        outFile = os.Stdout
+    } else {
+		// if no outFormat defined, infer from file extension
+		if *outFormat == "" {
+			switch ext := path.Ext(fname); ext {
+			case "", ".txt", ".text":
+				// pass
+			case ".json":
+				*outFormat = "json"
+			case ".csv":
+				*outFormat = "csv"
+			case ".xml":
+				*outFormat = "xml"
+			default:
+				log.Fatal("Unknown file extention (use -format): " + ext)
+			}
+		}
+		f, err := os.Create(fname)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+		outFile = io.Writer(f)
+	}
+
+	switch *outFormat {
+	case "text", "":
+		DumpBomAsText(bs, b, outFile)
+	case "json":
+		DumpBomAsJSON(bs, b, outFile)
+	case "csv":
+		DumpBomAsCSV(b, outFile)
+	case "xml":
+		DumpBomAsXML(bs, b, outFile)
+	default:
+		log.Fatal("Error: unknown/unimplemented format: " + *outFormat)
+	}
+
+}
+
+func loadIn(fname string) (bs *BomStub, b *Bom) {
+
+    if inFormat == "" {
+        switch ext := path.Ext(fname); ext {
+        case ".json", ".JSON":
+            inFormat = "json"
+        case ".csv", ".CSV":
+            inFormat = "csv"
+        case ".xml", ".XML":
+            inFormat = "xml"
+        default:
+            log.Fatal("Unknown file extention (use -format): " + ext)
+        }
+    }
+
+    infile, err := os.Open(fname)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer infile.Close()
+
+	switch inFormat {
+	case "json":
+		bs, b, err = LoadBomFromJSON(infile)
+	case "csv":
+		b, err = LoadBomFromCSV(infile)
+	case "xml":
+		bs, b, err = LoadBomFromXML(infile)
+	default:
+		log.Fatal("Error: unknown/unimplemented format: " + *outFormat)
+	}
+    if err != nil {
+        log.Fatal(err)
+    }
+    return bs, b
+}
+
+func initCmd() {
+    
+    openBomStore()
 	bs, err := bomstore.GetStub(ShortName("common"), ShortName("gizmo"))
 	if err == nil {
 		// dummy BomStub already exists?
@@ -95,43 +177,24 @@ func dumpCmd() {
 	if flag.NArg() != 3 && flag.NArg() != 4 {
 		log.Fatal("Error: wrong number of arguments (expected user and BOM name, optional file)")
 	}
+
 	userStr := flag.Arg(1)
 	nameStr := flag.Arg(2)
-	var outFile io.Writer
-	outFile = os.Stdout
-	if flag.NArg() == 4 {
-		f, err := os.Create(flag.Arg(3))
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer f.Close()
-		outFile = io.Writer(f)
-		// if no outFormat defined, infer from file extension
-		if *outFormat == "" {
-			switch ext := path.Ext(f.Name()); ext {
-			case "", ".txt", ".text":
-				// pass
-			case ".json":
-				*outFormat = "json"
-			case ".csv":
-				*outFormat = "csv"
-			case ".xml":
-				*outFormat = "xml"
-			default:
-				log.Fatal("Unknown file extention (use -format): " + ext)
-			}
-		}
-	}
 
 	if !isShortName(userStr) || !isShortName(nameStr) {
 		log.Fatal("Error: not valid ShortName: " + userStr +
 			" and/or " + nameStr)
 	}
-    var err error
-	bomstore, err = OpenJSONFileBomStore(*fileStorePath)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+    var fname string
+    if flag.NArg() == 4 {
+        fname = flag.Arg(3)
+    } else {
+        fname = ""
+    }
+
+    openBomStore()
+
 	if auth == nil {
 		auth = DummyAuth(true)
 	}
@@ -140,26 +203,34 @@ func dumpCmd() {
 		log.Fatal(err)
 	}
 
-	switch *outFormat {
-	case "text", "":
-		DumpBomAsText(bs, b, outFile)
-	case "json":
-		DumpBomAsJSON(bs, b, outFile)
-	case "csv":
-		DumpBomAsCSV(b, outFile)
-	case "xml":
-		DumpBomAsXML(bs, b, outFile)
-	default:
-		log.Fatal("Error: unknown/unimplemented format: " + *outFormat)
+    dumpOut(fname, bs, b)
+}
+
+func convertCmd() {
+	if flag.NArg() != 3 {
+		log.Fatal("Error: wrong number of arguments (expected input and output files)")
 	}
+
+    // should refactor this to open both files first, then do processing? not
+    // sure what best practice is.
+
+	inFname := flag.Arg(1)
+	outFname := flag.Arg(2)
+
+    bs, b := loadIn(inFname)
+    if inFormat == "csv" && bs == nil {
+        // TODO: from inname? if ShortName?
+        bs = &BomStub{Name: "untitled", Owner: anonUser.name}
+    }
+
+    dumpOut(outFname, bs, b)
 }
 
 func listCmd() {
-	bomstore, err := OpenJSONFileBomStore(*fileStorePath)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+    openBomStore()
 	var bomStubs []BomStub
+    var err error
 	if flag.NArg() > 2 {
 		log.Fatal("Error: too many arguments...")
 	}
