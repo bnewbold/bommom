@@ -77,6 +77,28 @@ func (b *Bom) AddLineItem(li *LineItem) error {
 	return nil
 }
 
+func (b *Bom) Validate() error {
+    if !isShortName(b.Version) {
+        return Error("version not a ShortName: \"" + b.Version + "\"")
+    }
+    // TODO: nil? what is zero of Time?
+    nullTime := time.Time{}
+    if b.Created == nullTime {
+        return Error("created timestamp not defined")
+    }
+    return nil
+}
+
+func (bs *BomStub) Validate() error {
+    if !isShortName(bs.Name) {
+        return Error("name not a ShortName: \"" + bs.Name + "\"")
+    }
+    if !isShortName(bs.Owner) {
+        return Error("owner name not a ShortName: \"" + bs.Owner + "\"")
+    }
+    return nil
+}
+
 // ---------- testing
 func makeTestBom() *Bom {
 	op1 := OfferPrice{Currency: "usd", Price: 1.0, MinQty: 1}

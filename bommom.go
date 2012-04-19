@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
     "path"
+    "time"
 )
 
 // Globals
@@ -51,13 +52,15 @@ func main() {
 	switch flag.Arg(0) {
 	default:
 		log.Fatal("Error: unknown command: ", flag.Arg(0))
-	case "load", "serve":
+	case "serve":
 		log.Fatal("Error: Unimplemented, sorry")
 	case "init":
 		log.Println("Initializing...")
 		initCmd()
 	case "dump":
 		dumpCmd()
+	case "load":
+		loadCmd()
 	case "convert":
 		convertCmd()
 	case "list":
@@ -206,6 +209,43 @@ func dumpCmd() {
     dumpOut(fname, bs, b)
 }
 
+func loadCmd() {
+
+    var userName, bomName, version string
+    if flag.NArg() == 4 {
+        userName = anonUser.name
+        bomName = flag.Arg(2)
+        version = flag.Arg(3)
+    } else if flag.NArg() == 5 {
+        userName = flag.Arg(2)
+        bomName = flag.Arg(3)
+        version = flag.Arg(4)
+    } else {
+		log.Fatal("Error: wrong number of arguments (expected input file, optional username, bomname)")
+    }
+	inFname := flag.Arg(1)
+
+    if !(isShortName(userName) && isShortName(bomName) && isShortName(version)) {
+        log.Fatal("user, name, and version must be ShortNames")
+    }
+
+
+    bs, b := loadIn(inFname)
+    if inFormat == "csv" && bs == nil {
+        // TODO: from inname? if ShortName?
+        bs = &BomStub{}
+    }
+
+    bs.Owner = userName
+    bs.Name = bomName
+    b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
+    b.Created = time.Now()
+
+    openBomStore()
+
+    bomstore.Persist(bs, b, ShortName(version))
+}
+
 func convertCmd() {
 	if flag.NArg() != 3 {
 		log.Fatal("Error: wrong number of arguments (expected input and output files)")
@@ -266,9 +306,9 @@ func printUsage() {
 	fmt.Println("")
 	fmt.Println("\tinit \t\t initialize BOM and authentication datastores")
 	fmt.Println("\tlist [user]\t\t list BOMs, optionally filtered by user")
-	fmt.Println("\tload <file.type> [user] [bom_name]\t import a BOM")
+	fmt.Println("\tload <file.type> [user] <bom_name> <version>\t import a BOM")
 	fmt.Println("\tdump <user> <name> [file.type]\t dump a BOM to stdout")
-	fmt.Println("\tconvert <infile.type> [outfile.type]\t convert a BOM file")
+	fmt.Println("\tconvert <infile.type> <outfile.type>\t convert a BOM file")
 	fmt.Println("\tserve\t\t serve up web interface over HTTP")
 	fmt.Println("")
 	fmt.Println("Extra command line options:")

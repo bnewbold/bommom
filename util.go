@@ -28,5 +28,5 @@ func isShortName(s string) bool {
 			return false
 		}
 	}
-	return true
+	return len(s) > 0
 }
