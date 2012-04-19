@@ -81,9 +81,7 @@ func (b *Bom) Validate() error {
     if !isShortName(b.Version) {
         return Error("version not a ShortName: \"" + b.Version + "\"")
     }
-    // TODO: nil? what is zero of Time?
-    nullTime := time.Time{}
-    if b.Created == nullTime {
+    if &b.Created == nil {
         return Error("created timestamp not defined")
     }
     return nil

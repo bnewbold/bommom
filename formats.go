@@ -96,19 +96,26 @@ func DumpBomAsJSON(bs *BomStub, b *Bom, out io.Writer) {
 
 func LoadBomFromJSON(input io.Reader) (*BomStub, *Bom, error) {
 
-    bs := BomStub{}
-    b := Bom{}
+    bs := &BomStub{}
+    b := &Bom{}
 
 	obj := map[string]interface{}{
-		"bom_meta": bs,
-		"bom":      b,
+		"bom_meta": &bs,
+		"bom":      &b,
 	}
+
+    fmt.Println(obj)
 
 	enc := json.NewDecoder(input)
 	if err := enc.Decode(&obj); err != nil {
 		log.Fatal(err)
 	}
-    return &bs, &b, nil
+    if &bs == nil || &b == nil {
+        log.Fatal("didn't load successfully")
+    }
+    fmt.Println(bs)
+    fmt.Println(b)
+    return bs, b, nil
 }
 
 // --------------------- XML -----------------------

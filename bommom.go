@@ -247,7 +247,7 @@ func loadCmd() {
 }
 
 func convertCmd() {
-	if flag.NArg() != 3 {
+	if flag.NArg() != 2 && flag.NArg() != 3 {
 		log.Fatal("Error: wrong number of arguments (expected input and output files)")
 	}
 
@@ -258,9 +258,20 @@ func convertCmd() {
 	outFname := flag.Arg(2)
 
     bs, b := loadIn(inFname)
+
+    if b == nil {
+        log.Fatal("null bom")
+    }
     if inFormat == "csv" && bs == nil {
         // TODO: from inname? if ShortName?
         bs = &BomStub{Name: "untitled", Owner: anonUser.name}
+    }
+    
+    if err := bs.Validate(); err != nil {
+        log.Fatal("loaded bomstub not valid: " + err.Error())
+    }
+    if err := b.Validate(); err != nil {
+        log.Fatal("loaded bom not valid: " + err.Error())
     }
 
     dumpOut(outFname, bs, b)
