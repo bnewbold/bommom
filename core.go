@@ -25,7 +25,8 @@ type LineItem struct {
     FormFactor   string  `json:"form_factor"` // type:string
     Specs        string  `json:"specs"` // comma seperated list
 	Comment      string `json:"comment"`
-	Tag          string `json:"tag"` // comma seperated list
+	Tag string `json:"tag"`  // comma seperated list
+	Category string `json:"category"` // hierarchy as comma seperated list
 	Elements []string `json:"elements"`
 	Offers   []Offer  `json:"offers"`
 }

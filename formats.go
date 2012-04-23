@@ -39,13 +39,12 @@ func DumpBomAsText(bm *BomMeta, b *Bom, out io.Writer) {
 	}
 	fmt.Println()
     tabWriter := tabwriter.NewWriter(out, 2, 4, 1, ' ', 0)
-	// "by line item"
-    // TODO: use text/tabwriter here to get proper column alignment
-	fmt.Fprintf(tabWriter, "tag\tqty\tmanufacturer\tmpn\t\tfunction\t\tcomment\n")
+	// "by line item", not "by element"
+	fmt.Fprintf(tabWriter, "qty\ttag\tmanufacturer\tmpn\t\tfunction\t\tcomment\n")
 	for _, li := range b.LineItems {
-		fmt.Fprintf(tabWriter, "%s\t%d\t%s\t%s\t\t%s\t\t%s\n",
-			li.Tag,
+		fmt.Fprintf(tabWriter, "%d\t%s\t%s\t%s\t\t%s\t\t%s\n",
 			len(li.Elements),
+			li.Tag,
 			li.Manufacturer,
 			li.Mpn,
 			li.Function,
@@ -67,6 +66,8 @@ func DumpBomAsCSV(b *Bom, out io.Writer) {
 		"function",
 		"form_factor",
 		"specs",
+		"category",
+		"tag",
 		"comment"})
 	for _, li := range b.LineItems {
 		dumper.Write([]string{
@@ -77,6 +78,8 @@ func DumpBomAsCSV(b *Bom, out io.Writer) {
 			li.Function,
 			li.FormFactor,
 			li.Specs,
+			li.Category,
+			li.Tag,
 			li.Comment})
 	}
 }
@@ -89,7 +92,6 @@ func appendField(existing, next *string) {
 }
 
 func LoadBomFromCSV(input io.Reader) (*Bom, error) {
-
 	b := Bom{LineItems: []LineItem{} }
     reader := csv.NewReader(input) 
     reader.TrailingComma = true
@@ -109,6 +111,8 @@ func LoadBomFromCSV(input io.Reader) (*Bom, error) {
         for i, col := range header {
             switch strings.ToLower(col) {
                 case "qty", "quantity":
+                    // if a quantity is specified, use it; else interpret it
+                    // from element id count
                     appendField(&qty, &records[i])
                 case "mpn", "manufacturer part number":
                     appendField(&li.Mpn, &records[i])
@@ -123,14 +127,18 @@ func LoadBomFromCSV(input io.Reader) (*Bom, error) {
                             log.Println("symbol not a ShortName, skipped: " + symb)
                         }
                     }
-                case "function", "purpose", "role":
+                case "function", "purpose", "role", "subsystem":
                     appendField(&li.Function, &records[i])
-                case "form_factor", "form factor", "case/package", "package", "symbol", "footprint":
+                case "formfactor", "form_factor", "form factor", "case/package", "package", "symbol", "footprint":
                     appendField(&li.FormFactor, &records[i])
-                case "specs", "specifications", "properties", "attributes", "value":
+                case "specs", "specifications", "properties", "attributes", "value", "type":
                     appendField(&li.Specs, &records[i])
                 case "comment", "comments", "note", "notes":
                     appendField(&li.Comment, &records[i])
+                case "category":
+                    appendField(&li.Category, &records[i])
+                case "tag":
+                    appendField(&li.Tag, &records[i])
                 default:
                     // pass, no assignment
                     // TODO: should warn on this first time around?
