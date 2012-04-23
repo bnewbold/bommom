@@ -49,8 +49,8 @@ func serveCmd() {
 	var err error
 
 	// load and parse templates
-	tmplHome = template.Must(template.ParseFiles(*templatePath + "/home.html"))
-	tmplView = template.Must(template.ParseFiles(*templatePath + "/view.html"))
+    baseTmplPath := *templatePath + "/base.html"
+	tmplHome = template.Must(template.ParseFiles(*templatePath + "/home.html", baseTmplPath))
 	if err != nil {
 		log.Fatal(err)
 	}
