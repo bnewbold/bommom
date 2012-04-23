@@ -234,13 +234,13 @@ func loadCmd() {
 	bm.Name = bomName
 	b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
 	b.Created = time.Now()
-    b.Version = version
+	b.Version = version
 
 	openBomStore()
 
 	if err := bomstore.Persist(bm, b, ShortName(version)); err != nil {
-        log.Fatal(err)
-    }
+		log.Fatal(err)
+	}
 }
 
 func convertCmd() {

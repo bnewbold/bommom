@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strconv"
 	"strings"
-    "strconv"
-    "text/tabwriter"
+	"text/tabwriter"
 )
 
 // This compound container struct is useful for serializing to XML and JSON
@@ -38,7 +38,7 @@ func DumpBomAsText(bm *BomMeta, b *Bom, out io.Writer) {
 		fmt.Fprintf(out, "Description:\t%s\n", bm.Description)
 	}
 	fmt.Println()
-    tabWriter := tabwriter.NewWriter(out, 2, 4, 1, ' ', 0)
+	tabWriter := tabwriter.NewWriter(out, 2, 4, 1, ' ', 0)
 	// "by line item", not "by element"
 	fmt.Fprintf(tabWriter, "qty\ttag\tmanufacturer\tmpn\t\tfunction\t\tcomment\n")
 	for _, li := range b.LineItems {
@@ -50,7 +50,7 @@ func DumpBomAsText(bm *BomMeta, b *Bom, out io.Writer) {
 			li.Function,
 			li.Comment)
 	}
-    tabWriter.Flush()
+	tabWriter.Flush()
 }
 
 // --------------------- csv -----------------------
@@ -85,90 +85,90 @@ func DumpBomAsCSV(b *Bom, out io.Writer) {
 }
 
 func appendField(existing, next *string) {
-    if *existing == "" {
-        *existing += " " + strings.TrimSpace(*next)
-    }
-    *existing = strings.TrimSpace(*next)
+	if *existing == "" {
+		*existing += " " + strings.TrimSpace(*next)
+	}
+	*existing = strings.TrimSpace(*next)
 }
 
 func LoadBomFromCSV(input io.Reader) (*Bom, error) {
-	b := Bom{LineItems: []LineItem{} }
-    reader := csv.NewReader(input) 
-    reader.TrailingComma = true
-    reader.TrimLeadingSpace = true
+	b := Bom{LineItems: []LineItem{}}
+	reader := csv.NewReader(input)
+	reader.TrailingComma = true
+	reader.TrimLeadingSpace = true
 
-    header, err := reader.Read()
-    if err != nil {
-        log.Fatal(err)
-    }
-    var li *LineItem
-    var el_count int
-    var records []string
-    var qty string
-    for records, err = reader.Read(); err == nil; records, err = reader.Read() {
-        qty = ""
-        li = &LineItem{Elements: []string{}}
-        for i, col := range header {
-            switch strings.ToLower(col) {
-                case "qty", "quantity":
-                    // if a quantity is specified, use it; else interpret it
-                    // from element id count
-                    appendField(&qty, &records[i])
-                case "mpn", "manufacturer part number":
-                    appendField(&li.Mpn, &records[i])
-                case "mfg", "manufacturer":
-                    appendField(&li.Manufacturer, &records[i])
-                case "element", "id", "circuit element", "symbol_id", "symbol id":
-                    for _, symb := range strings.Split(records[i], ",") {
-                        symb = strings.TrimSpace(symb)
-                        if !isShortName(symb) {
-                            li.Elements = append(li.Elements, symb)
-                        } else if *verbose {
-                            log.Println("symbol not a ShortName, skipped: " + symb)
-                        }
-                    }
-                case "function", "purpose", "role", "subsystem":
-                    appendField(&li.Function, &records[i])
-                case "formfactor", "form_factor", "form factor", "case/package", "package", "symbol", "footprint":
-                    appendField(&li.FormFactor, &records[i])
-                case "specs", "specifications", "properties", "attributes", "value", "type":
-                    appendField(&li.Specs, &records[i])
-                case "comment", "comments", "note", "notes":
-                    appendField(&li.Comment, &records[i])
-                case "category":
-                    appendField(&li.Category, &records[i])
-                case "tag":
-                    appendField(&li.Tag, &records[i])
-                default:
-                    // pass, no assignment
-                    // TODO: should warn on this first time around?
-            }
-        }
-        if qty != "" {
-            if n, err := strconv.Atoi(qty); err == nil && n >= 0 {
-                el_count = len(li.Elements)
-                // XXX: kludge
-                if n > 99999 || el_count > 99999 {
-                    log.Fatal("too large a quantity of elements passed, crashing")
-                } else if el_count > n {
-                    if *verbose {
-                        log.Println("more symbols than qty, taking all symbols")
-                    }
-                } else if el_count < n {
-                    for j := 0; j < (n - el_count); j++ {
-                        li.Elements = append(li.Elements, "")
-                    }
-                }
-            } 
-        }
-        if len(li.Elements) == 0 {
-            li.Elements = []string{"", }
-        }
-        b.LineItems = append(b.LineItems, *li)
-    }
-    if err.Error() != "EOF" {
-        log.Fatal(err)
-    }
+	header, err := reader.Read()
+	if err != nil {
+		log.Fatal(err)
+	}
+	var li *LineItem
+	var el_count int
+	var records []string
+	var qty string
+	for records, err = reader.Read(); err == nil; records, err = reader.Read() {
+		qty = ""
+		li = &LineItem{Elements: []string{}}
+		for i, col := range header {
+			switch strings.ToLower(col) {
+			case "qty", "quantity":
+				// if a quantity is specified, use it; else interpret it
+				// from element id count
+				appendField(&qty, &records[i])
+			case "mpn", "manufacturer part number":
+				appendField(&li.Mpn, &records[i])
+			case "mfg", "manufacturer":
+				appendField(&li.Manufacturer, &records[i])
+			case "element", "id", "circuit element", "symbol_id", "symbol id":
+				for _, symb := range strings.Split(records[i], ",") {
+					symb = strings.TrimSpace(symb)
+					if !isShortName(symb) {
+						li.Elements = append(li.Elements, symb)
+					} else if *verbose {
+						log.Println("symbol not a ShortName, skipped: " + symb)
+					}
+				}
+			case "function", "purpose", "role", "subsystem":
+				appendField(&li.Function, &records[i])
+			case "formfactor", "form_factor", "form factor", "case/package", "package", "symbol", "footprint":
+				appendField(&li.FormFactor, &records[i])
+			case "specs", "specifications", "properties", "attributes", "value", "type":
+				appendField(&li.Specs, &records[i])
+			case "comment", "comments", "note", "notes":
+				appendField(&li.Comment, &records[i])
+			case "category":
+				appendField(&li.Category, &records[i])
+			case "tag":
+				appendField(&li.Tag, &records[i])
+			default:
+				// pass, no assignment
+				// TODO: should warn on this first time around?
+			}
+		}
+		if qty != "" {
+			if n, err := strconv.Atoi(qty); err == nil && n >= 0 {
+				el_count = len(li.Elements)
+				// XXX: kludge
+				if n > 99999 || el_count > 99999 {
+					log.Fatal("too large a quantity of elements passed, crashing")
+				} else if el_count > n {
+					if *verbose {
+						log.Println("more symbols than qty, taking all symbols")
+					}
+				} else if el_count < n {
+					for j := 0; j < (n - el_count); j++ {
+						li.Elements = append(li.Elements, "")
+					}
+				}
+			}
+		}
+		if len(li.Elements) == 0 {
+			li.Elements = []string{""}
+		}
+		b.LineItems = append(b.LineItems, *li)
+	}
+	if err.Error() != "EOF" {
+		log.Fatal(err)
+	}
 	return &b, nil
 }
 

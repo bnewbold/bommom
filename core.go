@@ -19,16 +19,16 @@ type Offer struct {
 }
 
 type LineItem struct {
-	Manufacturer string `json:"manufacturer"`
-	Mpn          string `json:"mpn"`
-	Function     string `json:"function"`
-    FormFactor   string  `json:"form_factor"` // type:string
-    Specs        string  `json:"specs"` // comma seperated list
-	Comment      string `json:"comment"`
-	Tag string `json:"tag"`  // comma seperated list
-	Category string `json:"category"` // hierarchy as comma seperated list
-	Elements []string `json:"elements"`
-	Offers   []Offer  `json:"offers"`
+	Manufacturer string   `json:"manufacturer"`
+	Mpn          string   `json:"mpn"`
+	Function     string   `json:"function"`
+	FormFactor   string   `json:"form_factor"` // type:string
+	Specs        string   `json:"specs"`       // comma seperated list
+	Comment      string   `json:"comment"`
+	Tag          string   `json:"tag"`      // comma seperated list
+	Category     string   `json:"category"` // hierarchy as comma seperated list
+	Elements     []string `json:"elements"`
+	Offers       []Offer  `json:"offers"`
 }
 
 func (li *LineItem) Id() string {
