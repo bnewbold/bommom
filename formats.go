@@ -11,6 +11,7 @@ import (
 	"log"
 	"strings"
     "strconv"
+    "text/tabwriter"
 )
 
 // This compound container struct is useful for serializing to XML and JSON
@@ -37,11 +38,12 @@ func DumpBomAsText(bm *BomMeta, b *Bom, out io.Writer) {
 		fmt.Fprintf(out, "Description:\t%s\n", bm.Description)
 	}
 	fmt.Println()
+    tabWriter := tabwriter.NewWriter(out, 2, 4, 1, ' ', 0)
 	// "by line item"
     // TODO: use text/tabwriter here to get proper column alignment
-	fmt.Fprintf(out, "tag\tqty\tmanufacturer\tmpn\t\tfunction\t\tcomment\n")
+	fmt.Fprintf(tabWriter, "tag\tqty\tmanufacturer\tmpn\t\tfunction\t\tcomment\n")
 	for _, li := range b.LineItems {
-		fmt.Fprintf(out, "%s\t%d\t%s\t%s\t\t%s\t\t%s\n",
+		fmt.Fprintf(tabWriter, "%s\t%d\t%s\t%s\t\t%s\t\t%s\n",
 			li.Tag,
 			len(li.Elements),
 			li.Manufacturer,
@@ -49,20 +51,7 @@ func DumpBomAsText(bm *BomMeta, b *Bom, out io.Writer) {
 			li.Function,
 			li.Comment)
 	}
-	/* // "by circuit element"
-	   fmt.Fprintf(out, "tag\tsymbol\tmanufacturer\tmpn\t\tdescription\t\tcomment\n")
-	   for _, li := range b.LineItems {
-	       for _, elm := range li.Elements {
-	           fmt.Fprintf(out, "%s\t%s\t%s\t%s\t\t%s\t\t%s\n",
-	                      li.Tag,
-	                      elm,
-	                      li.Manufacturer,
-	                      li.Mpn,
-	                      li.Description,
-	                      li.Comment)
-	       }
-	   }
-	*/
+    tabWriter.Flush()
 }
 
 // --------------------- csv -----------------------
