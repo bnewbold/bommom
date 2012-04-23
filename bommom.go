@@ -25,6 +25,8 @@ var (
 	helpFlag      = flag.Bool("help", false, "print full help info")
 	outFormat     = flag.String("format", "", "command output format (for 'dump' etc)")
 	inFormat      = flag.String("informat", "", "command output format (for 'load' etc)")
+	listenPort    = flag.Uint("port", 7070, "port to listen on (HTTP serve)")
+	listenHost    = flag.String("host", "", "hostname to listen on (HTTP serve)")
 )
 
 func main() {
@@ -52,7 +54,7 @@ func main() {
 	switch flag.Arg(0) {
 	default:
 		log.Fatal("Error: unknown command: ", flag.Arg(0))
-	case "serve":
+	case "magic", "love":
 		log.Fatal("Error: Unimplemented, sorry")
 	case "init":
 		log.Println("Initializing...")
@@ -65,6 +67,9 @@ func main() {
 		convertCmd()
 	case "list":
 		listCmd()
+	case "serve":
+		// defined in serve.go
+		serveCmd()
 	}
 }
 
