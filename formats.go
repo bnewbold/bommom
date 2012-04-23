@@ -86,9 +86,10 @@ func DumpBomAsCSV(b *Bom, out io.Writer) {
 
 func appendField(existing, next *string) {
 	if *existing == "" {
+		*existing = strings.TrimSpace(*next)
+	} else {
 		*existing += " " + strings.TrimSpace(*next)
 	}
-	*existing = strings.TrimSpace(*next)
 }
 
 func LoadBomFromCSV(input io.Reader) (*Bom, error) {
@@ -118,16 +119,16 @@ func LoadBomFromCSV(input io.Reader) (*Bom, error) {
 				appendField(&li.Mpn, &records[i])
 			case "mfg", "manufacturer":
 				appendField(&li.Manufacturer, &records[i])
-			case "element", "id", "circuit element", "symbol_id", "symbol id":
+			case "element", "id", "circuit element", "symbol_id", "symbol id", "symbols":
 				for _, symb := range strings.Split(records[i], ",") {
 					symb = strings.TrimSpace(symb)
 					if !isShortName(symb) {
 						li.Elements = append(li.Elements, symb)
 					} else if *verbose {
-						log.Println("symbol not a ShortName, skipped: " + symb)
+						log.Println("element id not a ShortName, skipped: " + symb)
 					}
 				}
-			case "function", "purpose", "role", "subsystem":
+			case "function", "purpose", "role", "subsystem", "description":
 				appendField(&li.Function, &records[i])
 			case "formfactor", "form_factor", "form factor", "case/package", "package", "symbol", "footprint":
 				appendField(&li.FormFactor, &records[i])

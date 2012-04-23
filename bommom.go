@@ -82,6 +82,11 @@ func openBomStore() {
 	}
 }
 
+func openAuthStore() {
+	// defaults to dummy auth system
+	auth = DummyAuth(true)
+}
+
 func dumpOut(fname string, bm *BomMeta, b *Bom) {
 	var outFile io.Writer
 	if fname == "" {
@@ -202,10 +207,8 @@ func dumpCmd() {
 	}
 
 	openBomStore()
+	openAuthStore()
 
-	if auth == nil {
-		auth = DummyAuth(true)
-	}
 	bm, b, err := bomstore.GetHead(ShortName(userStr), ShortName(nameStr))
 	if err != nil {
 		log.Fatal(err)

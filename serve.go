@@ -9,25 +9,25 @@ import (
 )
 
 var (
-	tmplHome, tmplView *template.Template
+	tmplHome, tmplView, tmplUser, tmplBomView *template.Template
 )
 
 func baseHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	log.Printf("serving %s\n", r.URL.Path)
 
-	bomUrlPattern := regexp.MustCompile("^/([a-zA-Z][a-zA-Z0-9_]*)/([a-zA-Z][a-zA-Z0-9_]*)/(.*)$")
+	bomUrlPattern := regexp.MustCompile("^/([a-zA-Z][a-zA-Z0-9_]*)/([a-zA-Z][a-zA-Z0-9_]*)(/.*)$")
 	userUrlPattern := regexp.MustCompile("^/([a-zA-Z][a-zA-Z0-9_]*)/$")
 
 	switch {
 	case r.URL.Path == "/":
-		err = tmplHome.Execute(w, nil)
+		err = homeController(w, r)
 	case bomUrlPattern.MatchString(r.URL.Path):
 		match := bomUrlPattern.FindStringSubmatch(r.URL.Path)
-		bomController(w, r, match[1], match[2], match[3])
+		err = bomController(w, r, match[1], match[2], match[3])
 	case userUrlPattern.MatchString(r.URL.Path):
 		match := userUrlPattern.FindStringSubmatch(r.URL.Path)
-		fmt.Fprintf(w, "will show BOM list here for user %s", match[1])
+		err = userController(w, r, match[1], "")
 	default:
 		// 404
 		log.Println("warning: 404")
@@ -41,19 +41,71 @@ func baseHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func bomController(w http.ResponseWriter, r *http.Request, user, name, extra string) {
-	fmt.Fprintf(w, "will show BOM %s/%s here?", user, name)
+func homeController(w http.ResponseWriter, r *http.Request) (err error) {
+	context := make(map[string]interface{})
+	context["BomList"], err = bomstore.ListBoms("")
+	if err != nil {
+		return
+	}
+	err = tmplHome.Execute(w, context)
+	return
+}
+
+func userController(w http.ResponseWriter, r *http.Request, user, extra string) (err error) {
+	if !isShortName(user) {
+		http.Error(w, "invalid username: "+user, 400)
+		return
+	}
+	var email string
+	email, err = auth.GetEmail(user)
+	if err != nil {
+		// no such user
+		http.NotFound(w, r)
+		return
+	}
+	context := make(map[string]interface{})
+	context["BomList"], err = bomstore.ListBoms(ShortName(user))
+	context["Email"] = email
+	context["UserName"] = user
+	if err != nil {
+		return
+	}
+	err = tmplUser.Execute(w, context)
+	return
+}
+
+func bomController(w http.ResponseWriter, r *http.Request, user, name, extra string) (err error) {
+	if !isShortName(user) {
+		http.Error(w, "invalid username: "+user, 400)
+		return
+	}
+	if !isShortName(name) {
+		http.Error(w, "invalid bom name: "+name, 400)
+		return
+	}
+	context := make(map[string]interface{})
+	context["BomMeta"], context["Bom"], err = bomstore.GetHead(ShortName(user), ShortName(name))
+	if err != nil {
+		return
+	}
+	err = tmplBomView.Execute(w, context)
+	return
 }
 
 func serveCmd() {
 	var err error
 
 	// load and parse templates
-    baseTmplPath := *templatePath + "/base.html"
-	tmplHome = template.Must(template.ParseFiles(*templatePath + "/home.html", baseTmplPath))
+	baseTmplPath := *templatePath + "/base.html"
+	tmplHome = template.Must(template.ParseFiles(*templatePath+"/home.html", baseTmplPath))
+	tmplUser = template.Must(template.ParseFiles(*templatePath+"/user.html", baseTmplPath))
+	tmplBomView = template.Must(template.ParseFiles(*templatePath+"/bom_view.html", baseTmplPath))
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	openBomStore()
+	openAuthStore()
 
 	// serve template static assets (images, CSS, JS)
 	http.Handle("/static/", http.FileServer(http.Dir(*templatePath+"/")))

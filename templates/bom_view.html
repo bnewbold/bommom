@@ -1,0 +1,37 @@
+{{ template "HEADER" }}
+<h1>{{ .BomMeta.Name }} is a bom.</h1>
+<b>Owner: </b>{{ .BomMeta.Owner }}<br>
+{{ if .BomMeta.Homepage }}<b>Homepage: </b>{{ .BomMeta.Homepage }}<br>{{ end }}
+{{ if .BomMeta.Description }}<b>Description: </b>{{ .BomMeta.Description }}<br>{{ end }}
+<b>Version: </b>{{ .BomMeta.HeadVersion }} (at head)<br>
+<b>Created: </b>{{ .Bom.Created }}<br>
+{{ if .Bom.Progeny}}<b>Source: </b>{{ .Bom.Progeny }}<br>{{ end }}
+<table>
+<tr>
+  <th>qty
+  <th>elements
+  <th>manufacturer
+  <th>mpn
+  <th>function
+  <th>form_factor
+  <th>specs
+  <th>category
+  <th>tag
+  <th>comment
+</tr>
+{{ range .Bom.LineItems }}
+<tr>
+  <td>{{ len .Elements }}
+  <td>{{ range .Elements }}{{ if . }}{{ . }} {{ end }}{{ end }}
+  <td>{{ .Manufacturer }}
+  <td>{{ .Mpn }}
+  <td>{{ .Function }}
+  <td>{{ .FormFactor }}
+  <td>{{ .Specs }}
+  <td>{{ .Category }}
+  <td>{{ .Tag }}
+  <td>{{ .Comment }}
+</tr>
+{{ end }}
+</table>
+{{ template "FOOTER" }}
