@@ -24,7 +24,7 @@ var (
 	verbose       = flag.Bool("verbose", false, "print extra info")
 	helpFlag      = flag.Bool("help", false, "print full help info")
 	outFormat     = flag.String("format", "", "command output format (for 'dump' etc)")
-	inFormat      = ""
+	inFormat      = flag.String("informat", "", "command output format (for 'load' etc)")
 )
 
 func main() {
@@ -122,14 +122,14 @@ func dumpOut(fname string, bm *BomMeta, b *Bom) {
 
 func loadIn(fname string) (bm *BomMeta, b *Bom) {
 
-	if inFormat == "" {
+	if *inFormat == "" {
 		switch ext := path.Ext(fname); ext {
 		case ".json", ".JSON":
-			inFormat = "json"
+			*inFormat = "json"
 		case ".csv", ".CSV":
-			inFormat = "csv"
+			*inFormat = "csv"
 		case ".xml", ".XML":
-			inFormat = "xml"
+			*inFormat = "xml"
 		default:
 			log.Fatal("Unknown file extention (use -format): " + ext)
 		}
@@ -141,7 +141,7 @@ func loadIn(fname string) (bm *BomMeta, b *Bom) {
 	}
 	defer infile.Close()
 
-	switch inFormat {
+	switch *inFormat {
 	case "json":
 		bm, b, err = LoadBomFromJSON(infile)
 	case "csv":
@@ -225,14 +225,14 @@ func loadCmd() {
 	}
 
 	bm, b := loadIn(inFname)
-	if inFormat == "csv" && bm == nil {
+	if *inFormat == "csv" && bm == nil {
 		// TODO: from inname? if ShortName?
 		bm = &BomMeta{}
 	}
 
 	bm.Owner = userName
 	bm.Name = bomName
-	b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
+	b.Progeny = "File import from " + inFname + " (" + *inFormat + ")"
 	b.Created = time.Now()
 	b.Version = version
 
@@ -259,7 +259,7 @@ func convertCmd() {
 	if b == nil {
 		log.Fatal("null bom")
 	}
-	if inFormat == "csv" && bm == nil {
+	if *inFormat == "csv" && bm == nil {
 		// TODO: from inname? if ShortName?
 		bm = &BomMeta{Name: "untitled",
 			Owner: anonUser.name}
@@ -267,7 +267,7 @@ func convertCmd() {
 	}
 
 	b.Created = time.Now()
-	b.Progeny = "File import from " + inFname + " (" + inFormat + ")"
+	b.Progeny = "File import from " + inFname + " (" + *inFormat + ")"
 
 	if err := bm.Validate(); err != nil {
 		log.Fatal("loaded bommeta not valid: " + err.Error())

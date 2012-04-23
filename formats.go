@@ -60,7 +60,7 @@ func DumpBomAsCSV(b *Bom, out io.Writer) {
 	defer dumper.Flush()
 	// "by line item"
 	dumper.Write([]string{"qty",
-		"symbols",
+		"elements",
 		"manufacturer",
 		"mpn",
 		"function",
