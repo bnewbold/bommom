@@ -38,14 +38,15 @@ func DumpBomAsText(bm *BomMeta, b *Bom, out io.Writer) {
 	}
 	fmt.Println()
 	// "by line item"
-	fmt.Fprintf(out, "tag\tqty\tmanufacturer\tmpn\t\tdescription\t\tcomment\n")
+    // TODO: use text/tabwriter here to get proper column alignment
+	fmt.Fprintf(out, "tag\tqty\tmanufacturer\tmpn\t\tfunction\t\tcomment\n")
 	for _, li := range b.LineItems {
 		fmt.Fprintf(out, "%s\t%d\t%s\t%s\t\t%s\t\t%s\n",
 			li.Tag,
 			len(li.Elements),
 			li.Manufacturer,
 			li.Mpn,
-			li.Description,
+			li.Function,
 			li.Comment)
 	}
 	/* // "by circuit element"
@@ -74,7 +75,9 @@ func DumpBomAsCSV(b *Bom, out io.Writer) {
 		"symbols",
 		"manufacturer",
 		"mpn",
-		"description",
+		"function",
+		"form_factor",
+		"specs",
 		"comment"})
 	for _, li := range b.LineItems {
 		dumper.Write([]string{
@@ -82,9 +85,18 @@ func DumpBomAsCSV(b *Bom, out io.Writer) {
 			strings.Join(li.Elements, ","),
 			li.Manufacturer,
 			li.Mpn,
-			li.Description,
+			li.Function,
+			li.FormFactor,
+			li.Specs,
 			li.Comment})
 	}
+}
+
+func appendField(existing, next *string) {
+    if *existing == "" {
+        *existing += " " + strings.TrimSpace(*next)
+    }
+    *existing = strings.TrimSpace(*next)
 }
 
 func LoadBomFromCSV(input io.Reader) (*Bom, error) {
@@ -108,12 +120,12 @@ func LoadBomFromCSV(input io.Reader) (*Bom, error) {
         for i, col := range header {
             switch strings.ToLower(col) {
                 case "qty", "quantity":
-                    qty = strings.TrimSpace(records[i])
+                    appendField(&qty, &records[i])
                 case "mpn", "manufacturer part number":
-                    li.Mpn = strings.TrimSpace(records[i])
+                    appendField(&li.Mpn, &records[i])
                 case "mfg", "manufacturer":
-                    li.Manufacturer = strings.TrimSpace(records[i])
-                case "symbol", "symbols":
+                    appendField(&li.Manufacturer, &records[i])
+                case "element", "id", "circuit element", "symbol_id", "symbol id":
                     for _, symb := range strings.Split(records[i], ",") {
                         symb = strings.TrimSpace(symb)
                         if !isShortName(symb) {
@@ -122,18 +134,23 @@ func LoadBomFromCSV(input io.Reader) (*Bom, error) {
                             log.Println("symbol not a ShortName, skipped: " + symb)
                         }
                     }
-                case "description", "function":
-                    li.Description = strings.TrimSpace(records[i])
-                case "comment", "comments":
-                    li.Comment = strings.TrimSpace(records[i])
+                case "function", "purpose", "role":
+                    appendField(&li.Function, &records[i])
+                case "form_factor", "form factor", "case/package", "package", "symbol", "footprint":
+                    appendField(&li.FormFactor, &records[i])
+                case "specs", "specifications", "properties", "attributes", "value":
+                    appendField(&li.Specs, &records[i])
+                case "comment", "comments", "note", "notes":
+                    appendField(&li.Comment, &records[i])
                 default:
                     // pass, no assignment
+                    // TODO: should warn on this first time around?
             }
         }
         if qty != "" {
             if n, err := strconv.Atoi(qty); err == nil && n >= 0 {
                 el_count = len(li.Elements)
-                // XXX: kludge, should handle this better
+                // XXX: kludge
                 if n > 99999 || el_count > 99999 {
                     log.Fatal("too large a quantity of elements passed, crashing")
                 } else if el_count > n {

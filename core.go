@@ -21,10 +21,11 @@ type Offer struct {
 type LineItem struct {
 	Manufacturer string `json:"manufacturer"`
 	Mpn          string `json:"mpn"`
-	Description  string `json:"description"`
+	Function     string `json:"function"`
+    FormFactor   string  `json:"form_factor"` // type:string
+    Specs        string  `json:"specs"` // comma seperated list
 	Comment      string `json:"comment"`
-	Tag          string `json:"tag"`
-	// TODO: add "circuit element" type?
+	Tag          string `json:"tag"` // comma seperated list
 	Elements []string `json:"elements"`
 	Offers   []Offer  `json:"offers"`
 }
