@@ -21,7 +21,7 @@ type Offer struct {
 type LineItem struct {
 	Manufacturer string   `json:"manufacturer"`
 	Mpn          string   `json:"mpn"`
-	Function     string   `json:"function"`
+	Description  string   `json:"description"`
 	FormFactor   string   `json:"form_factor"` // type:string
 	Specs        string   `json:"specs"`       // comma seperated list
 	Comment      string   `json:"comment"`

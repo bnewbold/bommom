@@ -47,7 +47,7 @@ func DumpBomAsText(bm *BomMeta, b *Bom, out io.Writer) {
 			li.Tag,
 			li.Manufacturer,
 			li.Mpn,
-			li.Function,
+			li.Description,
 			li.Comment)
 	}
 	tabWriter.Flush()
@@ -75,7 +75,7 @@ func DumpBomAsCSV(b *Bom, out io.Writer) {
 			strings.Join(li.Elements, ","),
 			li.Manufacturer,
 			li.Mpn,
-			li.Function,
+			li.Description,
 			li.FormFactor,
 			li.Specs,
 			li.Category,
@@ -111,15 +111,15 @@ func LoadBomFromCSV(input io.Reader) (*Bom, error) {
 		li = &LineItem{Elements: []string{}}
 		for i, col := range header {
 			switch strings.ToLower(col) {
-			case "qty", "quantity":
+			case "qty", "quantity", "qnty":
 				// if a quantity is specified, use it; else interpret it
 				// from element id count
 				appendField(&qty, &records[i])
-			case "mpn", "manufacturer part number":
+			case "mpn", "manufacturer part number", "part number", "p/n":
 				appendField(&li.Mpn, &records[i])
-			case "mfg", "manufacturer":
+			case "mfg", "manufacturer", "mfg name", "manufacturer name":
 				appendField(&li.Manufacturer, &records[i])
-			case "element", "id", "circuit element", "symbol_id", "symbol id", "symbols":
+			case "element", "id", "circuit element", "symbol_id", "symbol id", "symbols", "designator", "reference":
 				for _, symb := range strings.Split(records[i], ",") {
 					symb = strings.TrimSpace(symb)
 					if !isShortName(symb) {
@@ -128,11 +128,11 @@ func LoadBomFromCSV(input io.Reader) (*Bom, error) {
 						log.Println("element id not a ShortName, skipped: " + symb)
 					}
 				}
-			case "function", "purpose", "role", "subsystem", "description":
-				appendField(&li.Function, &records[i])
+			case "description", "type", "function":
+				appendField(&li.Description, &records[i])
 			case "formfactor", "form_factor", "form factor", "case/package", "package", "symbol", "footprint":
 				appendField(&li.FormFactor, &records[i])
-			case "specs", "specifications", "properties", "attributes", "value", "type":
+			case "specs", "specifications", "properties", "attributes", "value":
 				appendField(&li.Specs, &records[i])
 			case "comment", "comments", "note", "notes":
 				appendField(&li.Comment, &records[i])

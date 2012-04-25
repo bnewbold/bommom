@@ -12,7 +12,7 @@
   <th>elements
   <th>manufacturer
   <th>mpn
-  <th>function
+  <th>description
   <th>form_factor
   <th>specs
   <th>category
@@ -25,7 +25,7 @@
   <td>{{ range .Elements }}{{ if . }}{{ . }} {{ end }}{{ end }}
   <td>{{ .Manufacturer }}
   <td>{{ .Mpn }}
-  <td>{{ .Function }}
+  <td>{{ .Description }}
   <td>{{ .FormFactor }}
   <td>{{ .Specs }}
   <td>{{ .Category }}
