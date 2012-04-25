@@ -1,6 +1,29 @@
-
 session library:
 https://github.com/bpowers/seshcookie
 
 postgres library:
 https://github.com/bmizerany/pq
+
+man page generation:
+http://code.google.com/p/mango-doc/
+
+crude xlsx library:
+https://github.com/tealeg/xlsx
+
+kicad libraries:
+http://www.kicadlib.org/
+http://per.launay.free.fr/kicad/kicad_php/composant.php
+
+BOM commentary:
+http://blog.screamingcircuits.com/2012/01/is-your-bom-a-smart-bom.html
+
+IPC Standards:
+http://webstds.ipc.org/2581/2581intro.htm
+http://landpatterns.ipc.org/default.asp
+
+Data Formats:
+http://pcdandf.com/cms/designnews/8107-a-short-history-of-electronic-data-formats
+
+http://ljh4timm.home.xs4all.nl/pcb-fpw/pcb-fpw.html
+
+http://cyclerecorder.org/footprintbuilder/
