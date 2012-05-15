@@ -27,3 +27,6 @@ http://pcdandf.com/cms/designnews/8107-a-short-history-of-electronic-data-format
 http://ljh4timm.home.xs4all.nl/pcb-fpw/pcb-fpw.html
 
 http://cyclerecorder.org/footprintbuilder/
+
+"Upverter Universal Format Converter"
+https://github.com/upverter/schematic-file-converter

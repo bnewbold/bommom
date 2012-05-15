@@ -15,6 +15,7 @@ type Offer struct {
 	Sku         string       `json:"sku"`
 	Url         string       `json:"distributor_url"`
 	Comment     string       `json:"comment"`
+    Available       uint32   `json:"avail"`
 	Prices      []OfferPrice `json:"prices"`
 }
 

@@ -21,14 +21,15 @@ Install golang compiler and run `go build` in this directory, then run the
 
  - command line tools for managing part list files
  - web interface for publishing and editing BOMs
+ - pricebreak summarization
  - file-backed datastore for BOMs
- - import/export to CSV, JSON, and XML formats
+ - import/export to CSV, JSON, XML, KiCad, SolderPad formats
  - Octopart API price fetching, with cache
  - mongodb-backed datastore for BOMs and web authentication
 
 ### Potential Extra Features
 
- - plugins and file format support for CAD software (Eagle, KiCad, etc)
+ - plugins and file format support for CAD software (Eagle, gEDA, etc)
  - HTTP JSON and XML APIs
  - "smart" spec parsing based on category hierarchy
  - SQL-backed datastore for BOMs and web authentication
