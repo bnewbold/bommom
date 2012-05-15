@@ -1,0 +1,29 @@
+ _     _        __             _   
+| |__ / | __ _ / _| ___   ___ | |_ 
+| '_ \| |/ _` | |_ / _ \ / _ \| __|
+| |_) | | (_| |  _| (_) | (_) | |_ 
+|_.__/|_|\__, |_|  \___/ \___/ \__|
+         |___/   
+
+electronics CAD symbol+footprint management tools and repository server.
+
+vaporware/proposal, no actual code
+
+### Basic Features
+
+- imports/exports Eagle XML, KiCad, and gEDA formats
+- search/query interface
+- basic component categorization ontology
+- "smart" pattern matching and mapping to standard symbols/footprints
+- complete JEDEC library
+- render to PNG and SVG
+- HTTP JSON and XML API for easy application interfacing
+
+### Extra Features
+
+- wiki-like interface for communal editing of info
+- other (ISO?) sybol/footprint/package ontologies
+- import/export Orcad, Altium, etc
+- render to PDF
+- scrape symbols and pinouts datasheet pdfs (at least some manufacturers?)
+- synchronization between repositories (local/remote)
