@@ -1,0 +1,469 @@
+{
+	"items": [
+		{
+			"value": "4G_MICROSD",
+			"description": "SD Card 4GB, Kingston w/adapter",
+			"designator": ""
+		},
+		{
+			"value": "BEAG_BOX",
+			"description": "BOX",
+			"designator": ""
+		},
+		{
+			"value": "LABEL_XM",
+			"description": "Label",
+			"designator": ""
+		},
+		{
+			"value": "BEAG+PACK",
+			"description": "Packing",
+			"designator": ""
+		},
+		{
+			"value": "SPACE_PLAS",
+			"description": "Standoff",
+			"designator": ""
+		},
+		{
+			"value": "500-5000-000",
+			"description": "Beagle PCB 6 layer, 3.35\"x3.25\", Rev B",
+			"designator": ""
+		},
+		{
+			"value": "VL-1220/VCN",
+			"description": "BAT_LI_RTC",
+			"designator": "BT1"
+		},
+		{
+			"value": "JMK212BJ106KD-T",
+			"description": "CAP CER 10UF 6.3V X5R 0805",
+			"designator": "C5, C111, C112, C118, C119, C128, C132, C136, C140, C144, C167, C189"
+		},
+		{
+			"value": "TMK316F106ZL-T",
+			"description": "CAP CER 10UF 25V Y5V 1206",
+			"designator": "C6"
+		},
+		{
+			"value": "B45196H1107M209V18",
+			"description": "CAP TANT 100UF 6.3V 10% SMD",
+			"designator": "C160, C161, C162, C163"
+		},
+		{
+			"value": "LMK105BJ104KV-F",
+			"description": "CAP CER .10UF 10V X5R 0402",
+			"designator": "C3, C7, C8, C12, C14, C15, C17, C19, C20, C24, C25, C26, C27, C28, C29, C30, C31, C32, C33, C34, C35, C36, C37, C38, C40, C41, C42, C43, C45, C46, C47, C48, C49, C50, C51, C52, C53, C54, C56, C57, C58, C59, C60, C61, C62, C63, C64, C65, C66, C67, C68, C69, C70, C71, C72, C75, C76, C78, C83, C84, C85, C91, C98, C99, C104, C107, C110, C117, C138, C139, C143, C145, C146, C147, C148, C149, C150, C151, C152, C153, C154, C155, C156, C157, C158, C159, C164, C165, C168, C170, C171, C172, C173, C174, C175, C176, C180, C181, C182, C183, C185, C186, C188, C191, C192, C193, C194, C195, C197, C204, C206"
+		},
+		{
+			"value": "C1005C0G1H470J",
+			"description": "CAP CER 47PF 50V C0G 5% 0402",
+			"designator": "C10, C11, C89, C90, C100, C101"
+		},
+		{
+			"value": "ECJ-1VB0J475M",
+			"description": "CAP CERAMIC 4.7UF 6.3V X5R 0603",
+			"designator": "C13, C16, C18, C21, C22, C23, C39, C44, C55, C77, C86, C105, C166, C169, C177, C184, C190, C205, C207, C211"
+		},
+		{
+			"value": "GRM155R61A105KE15D",
+			"description": "CAP CER 1UF 10V X5R 0402",
+			"designator": "C73, C74, C79, C80, C81, C108, C109, C113, C114, C115, C116, C120, C121, C123, C124, C125, C126, C127, C129, C130, C131, C133, C134, C135, C137, C187, C196, C210, C213"
+		},
+		{
+			"value": "CC0402KRX7R7BB102",
+			"description": "CAP CERAMIC .001UF 16V X7R 0402",
+			"designator": "C82"
+		},
+		{
+			"value": "GRM32ER61A476KE20L",
+			"description": "CAP CER 47UF 10V X5R 1210",
+			"designator": "C87, C88"
+		},
+		{
+			"value": "C0402C101J3GACTU",
+			"description": "CAP CERAMIC 100PF 25V NP0 0402",
+			"designator": "C92, C93, C94, C95, C96, C97, C199"
+		},
+		{
+			"value": "ECJ-0EC1H220J",
+			"description": "CAP 22PF 50V CERAMIC 0402 SMD",
+			"designator": "C102, C103"
+		},
+		{
+			"value": "JMK105BJ225MV-F",
+			"description": "CAP CER 2.2UF 6.3V X5R 0402",
+			"designator": "C106, C122"
+		},
+		{
+			"value": "GRM155R71H223KA12D",
+			"description": "CAP CER 22000PF 50V X7R 0402",
+			"designator": "C198"
+		},
+		{
+			"value": "C0402C330J5GACTU",
+			"description": "CAP CERAMIC 33PF 50V NP0 0402",
+			"designator": "C178, C179"
+		},
+		{
+			"value": "PGB1010603MR",
+			"description": "PulseGuard Supressors 0603 24VDC 45A",
+			"designator": "D1, D2, D3, D4, D8, D9, D10, D11"
+		},
+		{
+			"value": "LTST-C190GKT",
+			"description": "LED GREEN CLEAR 0603 SMD",
+			"designator": "D5, D6, D7, D12, D14"
+		},
+		{
+			"value": "LTST-C190CKT",
+			"description": "LED RED CLEAR 0603 SMD",
+			"designator": "D13"
+		},
+		{
+			"value": "67997-472HLF",
+			"description": "HDR2_.1x.1",
+			"designator": "J2"
+		},
+		{
+			"value": "83R3K-T",
+			"description": "INDUCTOR 3.3UH 10% 0603 SMD",
+			"designator": "L2, L3"
+		},
+		{
+			"value": "LPS3015-102MLC",
+			"description": "IND, POWER, 1.0UH, 30%, ISAT=2.0A, SMT",
+			"designator": "L4, L6"
+		},
+		{
+			"value": "LPS3010-102MLC",
+			"description": "IND, POWER, 1.0UH, 30%, SMT",
+			"designator": "L5"
+		},
+		{
+			"value": "MMZ1608R301A",
+			"description": "FERRITE CHIP 300 OHM 500MA 0603",
+			"designator": "L7, L8, L9"
+		},
+		{
+			"value": "BLM18PG121SN1D",
+			"description": "FERRITE CHIP 120 OHM 2000MA 0603",
+			"designator": "L10, L11"
+		},
+		{
+			"value": " ",
+			"description": " ",
+			"designator": " "
+		},
+		{
+			"value": "56579-0576",
+			"description": "CONN RECEPT USB 5POS RT ANG SMD",
+			"designator": "P1"
+		},
+		{
+			"value": "PJ-002A",
+			"description": "CONN POWER JACK 2.1MM",
+			"designator": "P2"
+		},
+		{
+			"value": "67997-472HLF",
+			"description": "HEADER 14POS .100\" STR TIN, DUAL ROW, 7 x2",
+			"designator": "P3"
+		},
+		{
+			"value": "5749181-1",
+			"description": "CONN RECEPT RTANG 4 POS GOLD PCB",
+			"designator": "P4"
+		},
+		{
+			"value": "SJ1-3513-SMT",
+			"description": "CONN JACK STEREO 3POS 3.5MM SMD",
+			"designator": "P5, P6"
+		},
+		{
+			"value": "SCHA2B0300",
+			"description": "CONN EJECT MICROSD PUSH-PUSH SMD",
+			"designator": "P7"
+		},
+		{
+			"value": "190-009-263R001",
+			"description": "CONN DB9 FEMALE R/A SOLDER SMD",
+			"designator": "P8"
+		},
+		{
+			"value": "LSWSS-114-D-02-T-LF",
+			"description": "EXP_HDR_28",
+			"designator": "P9"
+		},
+		{
+			"value": "HDR_17x2_1.27mm",
+			"description": "F618-MG -D051-XX-CF358",
+			"designator": "P10"
+		},
+		{
+			"value": "HDR 10X2_1.27mm",
+			"description": "HDR 10X2_1.27mm",
+			"designator": "P11, P13, P17"
+		},
+		{
+			"value": "HDR 2X2_1.27mm",
+			"description": "HDR 2X2_1.27mm",
+			"designator": "P18"
+		},
+		{
+			"value": "10029449-001RLF",
+			"description": "CONN RCPT HDMI R/A SMD",
+			"designator": "P12"
+		},
+		{
+			"value": "649-72309-8034BLF",
+			"description": "USB Connectors USB RECEPT ASSEMBLY DOUBLE DECK",
+			"designator": "P14, P16"
+		},
+		{
+			"value": "CONN_ETHER_MAG",
+			"description": "CONN MAGJACK 1PRT 10/100B-TX Y/G",
+			"designator": "P15"
+		},
+		{
+			"value": "XP0421400L",
+			"description": "TRANS ARRAY PNP/PNP W/RES S MINI",
+			"designator": "Q1, Q2"
+		},
+		{
+			"value": "EXB-2HV100JV",
+			"description": "RES ARRAY 10 OHM 5% 8 RES SMD",
+			"designator": "RP7, RP2, RP3, RP4"
+		},
+		{
+			"value": "RXEF010",
+			"description": "POLYSWITCH RXE SERIES 0.10A HOLD",
+			"designator": "RT1"
+		},
+		{
+			"value": "ERJ-3GEY0R00V",
+			"description": "RES 0.0 OHM 1/10W 5% 0603 SMD",
+			"designator": "R57, R65, R66, R67, R83, R98, R159"
+		},
+		{
+			"value": "RC0402FR-0710KL",
+			"description": "RES 10.0K OHM 1/16W 1% 0402 SMD",
+			"designator": "R1, R8, R24, R25, R31, R37, R38, R41, R42, R43, R54, R62, R72, R73, R74, R75, R76, R77, R81, R86, R90, R93, R94, R103, R106, R107, R108, R118, R123, R124, R125, R128, R129, R130, R135, R138, R140, R141"
+		},
+		{
+			"value": "RC0603FR-0712K4L",
+			"description": "RES 12.4K OHM 1/10W 1% 0603 SMD",
+			"designator": "R63"
+		},
+		{
+			"value": "MCR03EZPFX6203",
+			"description": "RES 620K OHM 1/10W 1% 0603 SMD",
+			"designator": "R9"
+		},
+		{
+			"value": "RES_12K_.1_0402",
+			"description": "RES 12K OHM 1/16W 0.1% 0402 SMD",
+			"designator": "R48, R49, R109"
+		},
+		{
+			"value": "MCR03EZPFX2003",
+			"description": "RES 200K OHM 1/10W 1% 0603 SMD",
+			"designator": "R10"
+		},
+		{
+			"value": "73L3R10J",
+			"description": "RES 0.10 OHM 1/8W 5% 0805",
+			"designator": "R13"
+		},
+		{
+			"value": "CRCW12100000Z0EA",
+			"description": "RES 0.0 OHM 1/3W 5% 1210 SMD",
+			"designator": "R119"
+		},
+		{
+			"value": "CRCW040256K2FKED",
+			"description": "RES 56.2K OHM 1/16W 1% 0402 SMD",
+			"designator": "R14, R111"
+		},
+		{
+			"value": "ERJ-2RKF2262X",
+			"description": "RES 22.6K OHM 1/10W 1% 0402 SMD",
+			"designator": "R15, R131"
+		},
+		{
+			"value": "CRCW040233R0JNED",
+			"description": "RES 33 OHM 1/16W 5% 0402 SMD",
+			"designator": "R16, R35, R47, R51, R56, R58, R60, R157"
+		},
+		{
+			"value": "RC0805FR-0749R9L",
+			"description": "RES 49.9 OHM 1/16W 1% 0805 SMD",
+			"designator": "R110, R114, R115, R116"
+		},
+		{
+			"value": "RC0402FR-0710RL",
+			"description": "RES 10.0 OHM 1/16W 1% 0402 SMD",
+			"designator": "R117"
+		},
+		{
+			"value": "CRCW04021K00JNED",
+			"description": "RES 1.0K OHM 1/16W 5% 0402 SMD",
+			"designator": "R17, R88, R91"
+		},
+		{
+			"value": "CRCW04024K70JNED",
+			"description": "RES 4.7K OHM 1/16W 5% 0402 SMD",
+			"designator": "R18, R19, R20, R21, R55, R59, R61, R89, R92, R34"
+		},
+		{
+			"value": "CRCW0402100KJNED",
+			"description": "RES 100K OHM 1/16W 5% 0402 SMD",
+			"designator": "R26, R27, R28, R29, R30, R101, R105"
+		},
+		{
+			"value": "CRCW04021K65FKED",
+			"description": "RES 1.65K OHM 1/16W 1% 0402 SMD",
+			"designator": "R32, R33"
+		},
+		{
+			"value": "RC0402JR-07330RL",
+			"description": "RES 330 OHM 1/16W 5% 0402 SMD",
+			"designator": "R12, R39, R40, R50, R64, R104, R136, R144, R152"
+		},
+		{
+			"value": "MCR03EZPFX2003",
+			"description": "RES 200K OHM 1/10W 1% 0402 SMD",
+			"designator": "R120"
+		},
+		{
+			"value": "CRCW040232K4FKED",
+			"description": "RES 32.4K OHM 1/10W 5% 0402 SMD",
+			"designator": "R113, R150, R153"
+		},
+		{
+			"value": "MCR01MZPJ000",
+			"description": "RES 0.0 OHM 1/16W 5% 0402 SMD",
+			"designator": "R78, R82, R100, R146, R149, R151, R158"
+		},
+		{
+			"value": "MCR03EZPFX8451",
+			"description": "RES 8.45K OHM 1/10W 1% 0603 SMD",
+			"designator": "R84"
+		},
+		{
+			"value": "MCR03EZPFX8061",
+			"description": "RES 8.06K OHM 1/10W 1% 0603 SMD",
+			"designator": "R85, R102, R132"
+		},
+		{
+			"value": "RC0402FR-07510RL",
+			"description": "RES, 510 OHM 1/10W 1% 0603 SMD",
+			"designator": "R87, R121, R22, R23, R137"
+		},
+		{
+			"value": "RC0402JR-071ML",
+			"description": "RES 1M OHM 1/5W 5% 0402 SMD",
+			"designator": "R112"
+		},
+		{
+			"value": "RES_10K_.1_0402",
+			"description": "RES 10K OHM 1/16W .1% 0402 SMD",
+			"designator": "R52, R53"
+		},
+		{
+			"value": "B3F-1000",
+			"description": "SWITCH TACT 6MM MOM 100GF",
+			"designator": "S1, S2"
+		},
+		{
+			"value": "TPS2141IPWP",
+			"description": "IC USB ADJ LDO 5V HP 14-HTSSOP",
+			"designator": "U2"
+		},
+		{
+			"value": "TL1963ADCQR",
+			"description": "Regulators - Low Dropout (LDO) 1.5A LDO Reg",
+			"designator": "U3, U16"
+		},
+		{
+			"value": "XDM3730ACBP",
+			"description": "DM3730_ES1.0",
+			"designator": "U4"
+		},
+		{
+			"value": "IC_MEM_POP_0G-4G",
+			"description": "IC,512MB Memory, POP",
+			"designator": "U4X "
+		},
+		{
+			"value": "SN74LVC2G07DBV",
+			"description": "IC BUFF/DVR DL NON-INV SOT236",
+			"designator": "U5"
+		},
+		{
+			"value": "SN74LVC2G06DCK",
+			"description": "IC DUAL BUFF/DRVR INV W/OD SC70-6",
+			"designator": "U18"
+		},
+		{
+			"value": "TPS3803G15DCKR",
+			"description": "IC VOLT DETECTOR ADJ/1.5V SC70-5",
+			"designator": "U19"
+		},
+		{
+			"value": "IC_SWITCH_20V",
+			"description": "IC LOAD SWITCH INT 20VIN SSOT-6",
+			"designator": "U31, U32"
+		},
+		{
+			"value": "TPS65950BZXN",
+			"description": "IC PWR MGMT W/11 LDO 209-BGA",
+			"designator": "U7"
+		},
+		{
+			"value": "SN65C3221EPWR",
+			"description": "IC LINE DVR/RCVR 1CH 16-TSSOP",
+			"designator": "U9"
+		},
+		{
+			"value": "TXS0102DCUR",
+			"description": "IC VOLT-LEVEL TRANSLATOR 8-US8",
+			"designator": "U10, U12"
+		},
+		{
+			"value": "TFP410PAP",
+			"description": "IC TRANSMITTER DIGITAL 64-HTQFP",
+			"designator": "U11"
+		},
+		{
+			"value": "TPS2054BD",
+			"description": "IC SWITCH PWR DIST QUAD 16-SOIC",
+			"designator": "U13"
+		},
+		{
+			"value": "USB3320C-EZK",
+			"description": "IC, USB3326 (CSP)",
+			"designator": "U14"
+		},
+		{
+			"value": "LAN9514-JZX",
+			"description": "IC, Ethernet Controllers USB 4 Port Hub Int 10/100 Ethernet",
+			"designator": "U15"
+		},
+		{
+			"value": "FX135A-327",
+			"description": "32KHz Crystal",
+			"designator": "Y3"
+		},
+		{
+			"value": "ECS-250-20-5PVX",
+			"description": "CRYSTAL 25.000 MHZ 20PF SMD",
+			"designator": "Y4"
+		},
+		{
+			"value": "OSC_26MHZ",
+			"description": "ECLIPTEK_26MHZ",
+			"designator": "Y1"
+		}
+	]
+}
