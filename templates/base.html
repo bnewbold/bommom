@@ -3,6 +3,47 @@
 <title>bommom</title>
 <link rel="stylesheet" type="text/css" href="/static/default.css"></link>
 </head>
-<body>{{ end }}
-{{ define "FOOTER" }}</body>
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container-fluid">
+      <a class="brand" href="/">bommom.com</a>
+      {{ range .BreadCrumbs }} / {{.}} {{end}}
+      <div class="nav-collapse collapse">
+        <p class="navbar-text pull-right">
+        {{ if .User }}
+            {{ .User.Email }}
+        {{ else }}
+            <button class="btn btn-mini disabled" type="button" style="margin-top: 9px;">Log in!</button>
+        {{ end }}
+        </p>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+{{ end }}
+{{ define "FOOTER" }}
+  </div>
+</div>
+</body>
 </html>{{ end }}
+
+{{ define "BOM_INFO" }}
+<div class="well well-small">
+    <dl class="dl-horizontal" style="margin: 0px;">
+    <dt>Owner: </dt><dd>{{ .BomMeta.Owner }}</dd>
+    {{ if .BomMeta.Homepage }}<dt>Homepage: </b>{{ .BomMeta.Homepage }}</dd>{{ end }}
+    {{ if .BomMeta.Description }}<dt>Description: </dt><dd>{{ .BomMeta.Description }}</dd>{{ end }}
+    <dt>Version: </dt><dd>{{ .BomMeta.HeadVersion }} (at head)</dd>
+    <dt>Created: </dt><dd>{{ .Bom.Created }}</dd>
+    {{ if .Bom.Progeny}}<dt>Source: </dt><dd>{{ .Bom.Progeny }}</dd>{{ end }}
+    </dl>
+</div>
+{{end}}
+

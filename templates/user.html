@@ -1,11 +1,11 @@
 {{ template "HEADER" }}
-<h1>{{ .User }} is a bommom user.</h1>
-<b>Email:</b> <a href="mailto:{{ .Email }}">{{ .Email }}</a>
-<ul>
+<h1>{{ .UserName }} is a bommom user.</h1>
+<table class="table">
 {{ range .BomList }}
-<li><a href="/{{ .Owner }}/{{ .Name }}/">{{ .Name }}</a>
+  <tr/>
+  <td/><a href="/{{ .Owner }}/{{ .Name }}/">{{ .Name }}</a>
 {{ else }}
 No Boms found!
 {{ end }}
-</ul>
+</table>
 {{ template "FOOTER" }}

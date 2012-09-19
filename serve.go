@@ -71,7 +71,6 @@ func userController(w http.ResponseWriter, r *http.Request, user, extra string) 
 	}
 	context := make(map[string]interface{})
 	context["BomList"], err = bomstore.ListBoms(ShortName(user))
-	context["Email"] = email
 	context["UserName"] = user
 	if err != nil {
 		return

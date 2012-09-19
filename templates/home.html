@@ -1,10 +1,11 @@
 {{ template "HEADER" }}
 <h1>this is bomom.</h1>
-<ul>
+<table class="table">
 {{ range .BomList }}
-<li><a href="/{{ .Owner }}/">{{ .Owner }}</a>/<a href="/{{ .Owner }}/{{ .Name }}/">{{ .Name }}</a>
+  <tr/>
+  <td/><a href="/{{ .Owner }}/">{{ .Owner }}</a>/<a href="/{{ .Owner }}/{{ .Name }}/">{{ .Name }}</a>
 {{ else }}
 No Boms found!
 {{ end }}
-</ul>
+</table>
 {{ template "FOOTER" }}

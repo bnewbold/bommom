@@ -43,10 +43,10 @@ func TestGetMarketInfo(t *testing.T) {
 }
 
 func TestAttachInfo(t *testing.T) {
-    b := makeTestBom()
+    _, b := makeTestBom()
     bm := &BomMeta{}
     oc := NewOctopartClient("")
     oc.AttachMarketInfo(oc)
-    DumpBomAsText(bm, b, 
+    DumpBomAsText(bm, b, os.Stdout)
 }
 

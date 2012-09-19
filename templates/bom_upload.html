@@ -2,12 +2,7 @@
 {{ if .BomMeta }}
 
 <h1>{{ .BomMeta.Name }} is a bom.</h1>
-<b>Owner: </b>{{ .BomMeta.Owner }}<br>
-{{ if .BomMeta.Homepage }}<b>Homepage: </b>{{ .BomMeta.Homepage }}<br>{{ end }}
-{{ if .BomMeta.Description }}<b>Description: </b>{{ .BomMeta.Description }}<br>{{ end }}
-<b>Version: </b>{{ .BomMeta.HeadVersion }} (at head)<br>
-<b>Created: </b>{{ .Bom.Created }}<br>
-{{ if .Bom.Progeny}}<b>Source: </b>{{ .Bom.Progeny }}<br>{{ end }}
+{{ template "BOM_INFO" . }}
 <hr>
 
 {{ else }}
