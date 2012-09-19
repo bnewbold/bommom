@@ -30,6 +30,7 @@ type LineItem struct {
 	Category     string   `json:"category"` // hierarchy as comma seperated list
 	Elements     []string `json:"elements"`
 	Offers       []Offer  `json:"offers"`
+    AggregateInfo map[string]string  `json:"miscinfo"`
 }
 
 func (li *LineItem) Id() string {
@@ -101,7 +102,7 @@ func (bm *BomMeta) Validate() error {
 }
 
 // ---------- testing
-func makeTestBom() *Bom {
+func makeTestBom() (*BomMeta, *Bom) {
 	op1 := OfferPrice{Currency: "usd", Price: 1.0, MinQty: 1}
 	op2 := OfferPrice{Currency: "usd", Price: 0.8, MinQty: 100}
 	o := Offer{Sku: "A123", Distributor: "Acme", Prices: []OfferPrice{op1, op2}}
@@ -114,5 +115,8 @@ func makeTestBom() *Bom {
 	//li.AddOffer(o)
 	b := NewBom("test01")
 	b.AddLineItem(&li)
-	return b
+	b.AddLineItem(&li)
+	b.AddLineItem(&li)
+    bm := &BomMeta{Name: "Some Bom", Owner: "Some Owner", Description: "This is such a thing!", HeadVersion: b.Version, Homepage: "http://bommom.com", IsPublicView: true, IsPublicEdit: false}
+	return bm, b
 }

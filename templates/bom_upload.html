@@ -1,0 +1,29 @@
+{{ template "HEADER" }}
+{{ if .BomMeta }}
+
+<h1>{{ .BomMeta.Name }} is a bom.</h1>
+<b>Owner: </b>{{ .BomMeta.Owner }}<br>
+{{ if .BomMeta.Homepage }}<b>Homepage: </b>{{ .BomMeta.Homepage }}<br>{{ end }}
+{{ if .BomMeta.Description }}<b>Description: </b>{{ .BomMeta.Description }}<br>{{ end }}
+<b>Version: </b>{{ .BomMeta.HeadVersion }} (at head)<br>
+<b>Created: </b>{{ .Bom.Created }}<br>
+{{ if .Bom.Progeny}}<b>Source: </b>{{ .Bom.Progeny }}<br>{{ end }}
+<hr>
+
+{{ else }}
+
+<h1>{{ .name }} could be a bom.</h1>
+<b>Owner: </b>{{ .user }}<br>
+<hr>
+
+{{ end }}
+
+{{ if .error }}<h3 style="color:red;">{{ .error }}</h3>{{ end }}
+<form enctype="multipart/form-data" method="POST" target=".">
+<b>Version: </b><input name="version" type="text" value="{{ .version }}"></input><br>
+<b>Created: </b>now!<br>
+<input type="file" name="bomfile" accept="application/json,application/xml,text/csv"></input><br>
+<input type="submit" value="Upload"></input>
+</form>
+
+{{ template "FOOTER" }}

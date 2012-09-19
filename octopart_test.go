@@ -42,4 +42,11 @@ func TestGetMarketInfo(t *testing.T) {
     }
 }
 
-//TODO? TestGetPricing
+func TestAttachInfo(t *testing.T) {
+    b := makeTestBom()
+    bm := &BomMeta{}
+    oc := NewOctopartClient("")
+    oc.AttachMarketInfo(oc)
+    DumpBomAsText(bm, b, 
+}
+

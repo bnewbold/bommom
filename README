@@ -10,12 +10,17 @@
 
 BomMom: A web publishing/wiki system for electronics Bill of Materials (BOM) 
 
-A work in progress as of April 2012. Written in golang.
+VAPORWARE ALERT! A work in progress as of April 2012.
+
+Written in golang.
 
 ### Instructions
 
 Install golang compiler and run `go build` in this directory, then run the
 `bommom` command to list available commands and options. 
+
+Run ``./bommom -port 7777 serve`` to start a server on local port 7777; by
+default listens on all interfaces.
 
 ### Basic Features
 

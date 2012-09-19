@@ -175,7 +175,7 @@ func initCmd() {
 		// dummy BomMeta already exists?
 		return
 	}
-	b := makeTestBom()
+	_, b := makeTestBom()
 	b.Version = "v001"
 	bm = &BomMeta{Name: "gizmo",
 		Owner:        "common",
