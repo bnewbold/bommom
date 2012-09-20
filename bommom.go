@@ -27,6 +27,7 @@ var (
 	inFormat      = flag.String("informat", "", "command output format (for 'load' etc)")
 	listenPort    = flag.Uint("port", 7070, "port to listen on (HTTP serve)")
 	listenHost    = flag.String("host", "", "hostname to listen on (HTTP serve)")
+	sessionSecret = flag.String("sessionSecret", "12345", "cookie session secret")
 )
 
 func main() {

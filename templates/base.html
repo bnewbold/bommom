@@ -2,6 +2,19 @@
 <head>
 <title>bommom</title>
 <link rel="stylesheet" type="text/css" href="/static/default.css"></link>
+<script src="/static/include.js"></script>
+<script>
+function login() {
+    navigator.id.get(function(assertion) {
+        if (assertion) {
+            var assertion_field = document.getElementById("assertion-field");
+            assertion_field.value = assertion;
+            var login_form = document.getElementById("login-form");
+            login_form.submit();
+        }
+    });
+}
+</script>
 </head>
 <body>
 
@@ -12,10 +25,11 @@
       {{ range .BreadCrumbs }} / {{.}} {{end}}
       <div class="nav-collapse collapse">
         <p class="navbar-text pull-right">
-        {{ if .User }}
-            {{ .User.Email }}
+        {{ if .Session.UserName }}
+            {{ .Session.UserName }}
+            <a href="/account/logout/"><button class="btn btn-mini" type="button" style="margin-left: 5px;">Log out!</button></a>
         {{ else }}
-            <button class="btn btn-mini disabled" type="button" style="margin-top: 9px;">Log in!</button>
+            <a href="/account/login/"><button class="btn btn-mini" type="button" style="margin-top: 9px;">Log in!</button></a>
         {{ end }}
         </p>
       </div><!--/.nav-collapse -->

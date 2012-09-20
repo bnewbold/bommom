@@ -1,4 +1,4 @@
-{{ template "HEADER" }}
+{{ template "HEADER" . }}
 <h1>this is bomom.</h1>
 <table class="table">
 {{ range .BomList }}
@@ -8,4 +8,4 @@
 No Boms found!
 {{ end }}
 </table>
-{{ template "FOOTER" }}
+{{ template "FOOTER" . }}

@@ -1,0 +1,29 @@
+{{ template "HEADER" . }}
+{{ if .ActionLogin }}
+
+<br><br><br><br>
+<div class="container">
+	<div class="row">
+		<div class="span6 offset3 well">
+			<legend>Please Sign In</legend>
+            {{ if .Problem }}
+            <div class="alert alert-error">
+                <strong>Problem!</strong> {{ .Problem }}
+            </div>
+            {{ end }}
+			<form method="POST" action="/account/login/" id="login-form">
+              <input id="assertion-field" type="hidden" name="assertion" value="">
+              <input type="text" id="UserName" class="span6" name="UserName" placeholder="Username">
+			</form>    
+            <a href="javascript:login()"><button class="btn btn-info btn-block">Sign In With Mozilla Persona</button></a>
+		</div>
+	</div>
+</div>
+
+{{ else }}
+{{if .ActionLogout }}
+<h1>logged out, goodbye!</h1>
+{{ else }}{{if .ActionNewUser }}
+<h1>hello new human!</h1>
+{{end}}{{end}}{{end}}
+{{ template "FOOTER" . }}

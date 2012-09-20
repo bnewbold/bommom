@@ -1,4 +1,4 @@
-{{ template "HEADER" }}
+{{ template "HEADER" . }}
 <h1>{{ .BomMeta.Name }} is a bom.</h1>
 <a href="./_upload/"><button class="btn btn-mini">upload new</button></a>
 <br>
@@ -32,4 +32,4 @@
 </tr>
 {{ end }}
 </table>
-{{ template "FOOTER" }}
+{{ template "FOOTER" . }}

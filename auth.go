@@ -12,6 +12,7 @@ type AuthService interface {
 	NewAccount(name, pw, email string) error
 	ChangePassword(name, oldPw, newPw string) error
 	GetEmail(name string) (string, error)
+	GetUserName(email string) (string, error)
 }
 
 // DummyAuth is a "wide-open" implementation of AuthService for development and
@@ -32,5 +33,9 @@ func (da DummyAuth) ChangePassword(name, oldPw, newPw string) error {
 }
 
 func (da DummyAuth) GetEmail(name string) (string, error) {
-	return "example@bommom.com", nil
+	return "example@localhost", nil
+}
+
+func (da DummyAuth) GetUserName(name string) (string, error) {
+	return "common", nil
 }

@@ -8,11 +8,14 @@ import (
 	"regexp"
     "path/filepath"
     "time"
+    "code.google.com/p/gorilla/sessions"
 )
 
 var (
-	tmplHome, tmplView, tmplUser, tmplBomView, tmplBomUpload *template.Template
+	tmplHome, tmplView, tmplAccount, tmplUser, tmplBomView, tmplBomUpload *template.Template
 )
+
+var store = sessions.NewCookieStore([]byte(*sessionSecret))
 
 func baseHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
@@ -25,6 +28,12 @@ func baseHandler(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.URL.Path == "/":
 		err = homeController(w, r)
+	case r.URL.Path == "/account/login/":
+		err = loginController(w, r)
+	case r.URL.Path == "/account/logout/":
+		err = logoutController(w, r)
+	//case r.URL.Path == "/account/newuser/":
+	//	err = newUserController(w, r)
 	case bomUploadUrlPattern.MatchString(r.URL.Path):
 		match := bomUploadUrlPattern.FindStringSubmatch(r.URL.Path)
 		err = bomUploadController(w, r, match[1], match[2])
@@ -48,7 +57,10 @@ func baseHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func homeController(w http.ResponseWriter, r *http.Request) (err error) {
+    session, _ := store.Get(r, "bommom")
 	context := make(map[string]interface{})
+	context["Session"] = session.Values
+    log.Printf("%s\n", session.Values["UserName"])
 	context["BomList"], err = bomstore.ListBoms("")
 	if err != nil {
 		return
@@ -57,13 +69,54 @@ func homeController(w http.ResponseWriter, r *http.Request) (err error) {
 	return
 }
 
+func loginController(w http.ResponseWriter, r *http.Request) (err error) {
+    session, _ := store.Get(r, "bommom")
+    context := make(map[string]interface{})
+    context["ActionLogin"] = true
+    context["Session"] = session.Values
+    if r.Method == "POST" {
+        if isShortName(r.FormValue("UserName")) != true {
+            context["Problem"] = "Ugh, need to use a SHORTNAME!"
+            err = tmplAccount.Execute(w, context)
+            return
+        }
+        audience := "http://localhost:7070"
+        vResponse := VerifyPersonaAssertion(r.FormValue("assertion"), audience)
+        if vResponse.Okay() {
+            session.Values["UserName"] = r.FormValue("UserName")
+            session.Values["Email"] = vResponse.Email
+            session.Save(r, w)
+            context["Session"] = session.Values
+            http.Redirect(w, r, "/", 302)
+            return
+        } else {
+            context["Problem"] = vResponse.Reason
+            err = tmplAccount.Execute(w, context)
+            return
+        }
+    }
+	err = tmplAccount.Execute(w, context)
+	return
+}
+
+func logoutController(w http.ResponseWriter, r *http.Request) (err error) {
+    session, _ := store.Get(r, "bommom")
+    context := make(map[string]interface{})
+    delete(session.Values, "UserName")
+    delete(session.Values, "Email")
+    session.Save(r, w)
+    context["Session"] = session.Values
+    context["ActionLogout"] = true
+	err = tmplAccount.Execute(w, context)
+	return
+}
+
 func userController(w http.ResponseWriter, r *http.Request, user, extra string) (err error) {
+    session, _ := store.Get(r, "bommom")
 	if !isShortName(user) {
 		http.Error(w, "invalid username: "+user, 400)
 		return
 	}
-	var email string
-	email, err = auth.GetEmail(user)
 	if err != nil {
 		// no such user
 		http.NotFound(w, r)
@@ -72,6 +125,7 @@ func userController(w http.ResponseWriter, r *http.Request, user, extra string) 
 	context := make(map[string]interface{})
 	context["BomList"], err = bomstore.ListBoms(ShortName(user))
 	context["UserName"] = user
+	context["Session"] = session.Values
 	if err != nil {
 		return
 	}
@@ -80,6 +134,7 @@ func userController(w http.ResponseWriter, r *http.Request, user, extra string) 
 }
 
 func bomController(w http.ResponseWriter, r *http.Request, user, name string) (err error) {
+    session, _ := store.Get(r, "bommom")
 	if !isShortName(user) {
 		http.Error(w, "invalid username: "+user, 400)
 		return
@@ -90,6 +145,7 @@ func bomController(w http.ResponseWriter, r *http.Request, user, name string) (e
 	}
 	context := make(map[string]interface{})
 	context["BomMeta"], context["Bom"], err = bomstore.GetHead(ShortName(user), ShortName(name))
+	context["Session"] = session.Values
 	if err != nil {
 		http.Error(w, "404 couldn't open bom: " + user + "/" + name, 404)
 		return nil
@@ -99,6 +155,7 @@ func bomController(w http.ResponseWriter, r *http.Request, user, name string) (e
 }
 
 func bomUploadController(w http.ResponseWriter, r *http.Request, user, name string) (err error) {
+    session, _ := store.Get(r, "bommom")
 
 	if !isShortName(user) {
 		http.Error(w, "invalid username: "+user, 400)
@@ -109,6 +166,7 @@ func bomUploadController(w http.ResponseWriter, r *http.Request, user, name stri
 		return
 	}
 	context := make(map[string]interface{})
+	context["Session"] = session.Values
     context["user"] = ShortName(user)
     context["name"] = ShortName(name)
 	context["BomMeta"], context["Bom"], err = bomstore.GetHead(ShortName(user), ShortName(name))
@@ -202,6 +260,9 @@ func serveCmd() {
 	// load and parse templates
 	baseTmplPath := *templatePath + "/base.html"
 	tmplHome = template.Must(template.ParseFiles(*templatePath+"/home.html", baseTmplPath))
+	tmplAccount = template.Must(template.ParseFiles(*templatePath+"/account.html", baseTmplPath))
+	//tmplLogout = template.Must(template.ParseFiles(*templatePath+"/logout.html", baseTmplPath))
+	//tmplNewUser = template.Must(template.ParseFiles(*templatePath+"/newuser.html", baseTmplPath))
 	tmplUser = template.Must(template.ParseFiles(*templatePath+"/user.html", baseTmplPath))
 	tmplBomView = template.Must(template.ParseFiles(*templatePath+"/bom_view.html", baseTmplPath))
 	tmplBomUpload = template.Must(template.ParseFiles(*templatePath+"/bom_upload.html", baseTmplPath))
