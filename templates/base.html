@@ -2,6 +2,7 @@
 <head>
 <title>bommom</title>
 <link rel="stylesheet" type="text/css" href="/static/default.css"></link>
+<!-- Start Mozilla Persona Code -->
 <script src="/static/include.js"></script>
 <script>
 function login() {
@@ -15,6 +16,7 @@ function login() {
     });
 }
 </script>
+<!-- End Mozilla Persona Code -->
 </head>
 <body>
 
@@ -24,14 +26,18 @@ function login() {
       <a class="brand" href="/">bommom.com</a>
       {{ range .BreadCrumbs }} / {{.}} {{end}}
       <div class="nav-collapse collapse">
-        <p class="navbar-text pull-right">
         {{ if .Session.UserName }}
-            {{ .Session.UserName }}
-            <a href="/account/logout/"><button class="btn btn-mini" type="button" style="margin-left: 5px;">Log out!</button></a>
-        {{ else }}
-            <a href="/account/login/"><button class="btn btn-mini" type="button" style="margin-top: 9px;">Log in!</button></a>
-        {{ end }}
+        <p class="navbar-text pull-right">
+            <a href="/account/logout/"><button class="btn btn-mini" type="button" style="margin-left: 15px; margin-top:9px;">Log out!</button></a>
         </p>
+        <p class="navbar-text pull-right">
+            logged in as {{ .Session.UserName }}
+        </p>
+        {{ else }}
+        <p class="navbar-text pull-right">
+            <a href="/account/login/"><button class="btn btn-mini" type="button" style="margin-top: 9px;">Log in!</button></a>
+        </p>
+        {{ end }}
       </div><!--/.nav-collapse -->
     </div>
   </div>

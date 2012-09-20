@@ -1,5 +1,22 @@
 {{ template "HEADER" . }}
 <h1>this is bomom.</h1>
+<div class="well">
+<p>
+bommom is a tool for publishing and analysing electronics "bill of materials",
+which are lists of components required to assemble a device like a digital
+watch or a space telescope control module.
+</p>
+<p>
+this is an open source project; get the code at <a
+href="http://git.bnewbold.net/bommom/">git.bnewbold.net/bommom</a> or <a
+href="http://github.com/bnewbold/bommom">github.com/bnewbold/bommom</a>. the
+project includes a command line tool for managing and converting repositories
+of BOMs. it is written in <a href="http://golang.org">golang</a> (the "go"
+programming language).
+</p>
+</div>
+
+<h3>all BOMs from all users</h3>
 <table class="table">
 {{ range .BomList }}
   <tr/>

@@ -51,8 +51,8 @@ func baseHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		// this could cause multiple responses?
-		http.Error(w, "Internal error (check logs)", 500)
 		log.Println("error, 500: " + err.Error())
+		http.Error(w, "Internal error (check logs)", 500)
 	}
 }
 
@@ -124,6 +124,9 @@ func userController(w http.ResponseWriter, r *http.Request, user, extra string) 
 	}
 	context := make(map[string]interface{})
 	context["BomList"], err = bomstore.ListBoms(ShortName(user))
+    if user == "common" {
+        context["IsCommon"] = true
+    }
 	context["UserName"] = user
 	context["Session"] = session.Values
 	if err != nil {
@@ -173,8 +176,6 @@ func bomUploadController(w http.ResponseWriter, r *http.Request, user, name stri
 
     switch r.Method {
 	case "POST":
-
-
         err := r.ParseMultipartForm(1024*1024*2)
         if err != nil {
             log.Println(err)
@@ -218,7 +219,7 @@ func bomUploadController(w http.ResponseWriter, r *http.Request, user, name stri
                 b, err = LoadBomFromCSV(file)
                 bm = &BomMeta{}
                 if err != nil {
-                    context["error"] = "Problem loading XML file"
+                    context["error"] = "Problem loading CSV file: " + err.Error()
                     err = tmplBomUpload.Execute(w, context)
                     return err
                 }
@@ -231,6 +232,7 @@ func bomUploadController(w http.ResponseWriter, r *http.Request, user, name stri
                 }
             default:
                 context["error"] = "Unknown file type: " + string(fileheader.Filename)
+                log.Fatal(context["error"])
                 err = tmplBomUpload.Execute(w, context)
                 return err
         }
@@ -244,8 +246,10 @@ func bomUploadController(w http.ResponseWriter, r *http.Request, user, name stri
             err = tmplBomUpload.Execute(w, context)
         }
         http.Redirect(w, r, "//" + user + "/" + name + "/", 302)
+        return err
 	case "GET":
         err = tmplBomUpload.Execute(w, context)
+        return err
     default:
         http.Error(w, "bad method", 405)
         return nil

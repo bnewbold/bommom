@@ -1,5 +1,18 @@
 {{ template "HEADER" . }}
+{{ if .IsCommon }}
+<h1>publicly mirrored BOMs</h1>
+<div class="well">
+here BOMs from the "commons" of publicly available open hardware designs are
+collected. any <a href="/account/login/">logged in</a> bommom user can submit
+or edit BOMs here.
+</div>
+
+<h3>all BOMs in the commons</h3>
+{{ else }}
 <h1>{{ .UserName }} is a bommom user.</h1>
+<h3>all of {{ .UserName }}'s BOMs</h3>
+{{ end }}
+
 <table class="table">
 {{ range .BomList }}
   <tr/>

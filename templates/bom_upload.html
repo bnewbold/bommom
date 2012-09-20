@@ -4,21 +4,53 @@
 <h1>{{ .BomMeta.Name }} is a bom.</h1>
 {{ template "BOM_INFO" . }}
 <hr>
-
 {{ else }}
 
 <h1>{{ .name }} could be a bom.</h1>
-<b>Owner: </b>{{ .user }}<br>
-<hr>
-
 {{ end }}
 
-{{ if .error }}<h3 style="color:red;">{{ .error }}</h3>{{ end }}
-<form enctype="multipart/form-data" method="POST" target=".">
-<b>Version: </b><input name="version" type="text" value="{{ .version }}"></input><br>
-<b>Created: </b>now!<br>
-<input type="file" name="bomfile" accept="application/json,application/xml,text/csv"></input><br>
-<input type="submit" value="Upload"></input>
+<form class="form-horizontal" enctype="multipart/form-data" method="POST" target=".">
+  {{ if .error }}
+  <div class="alert alert-error">
+    <strong>Error!</strong> {{ .error }}
+  </div>
+  {{ end }}
+  <div class="control-group">
+    <label class="control-label" for="owner">Owner</label>
+    <div class="controls">
+      <input type="text" id="created" name="owner" placeholder="{{ .user }}" disabled class="input-large">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="name">Name</label>
+    <div class="controls">
+      <input type="text" id="created" name="name" placeholder="{{ .name }}" disabled class="input-large">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="version">Version</label>
+    <div class="controls">
+      <input type="text" id="version" name="version" value="{{ .version }}" placeholder="eg, Rev5" class="input-large">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="created">Creation Time</label>
+    <div class="controls">
+      <input type="text" id="created" name="created" placeholder="right now!" disabled class="input-large">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="bomfile">File</label>
+    <div class="controls">
+      <input type="file" name="bomfile" accept="application/json,application/xml,text/csv"></input>
+      <span class="help-inline">.json, .xml, or .csv</span>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" name="submit" value="up" class="btn btn-primary">Upload</button>
+    </div>
+  </div>
 </form>
 
 {{ template "FOOTER" . }}
