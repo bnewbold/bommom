@@ -100,8 +100,8 @@ func LoadBomFromCSV(input io.Reader) (*Bom, error) {
 
 	header, err := reader.Read()
 	if err != nil {
-        log.Printf("error parsing .csv: %s", err)
-        return nil, err
+		log.Printf("error parsing .csv: %s", err)
+		return nil, err
 	}
 	var li *LineItem
 	var el_count int
@@ -151,9 +151,9 @@ func LoadBomFromCSV(input io.Reader) (*Bom, error) {
 				el_count = len(li.Elements)
 				// XXX: kludge
 				if n > 99999 || el_count > 99999 {
-                    err = Error("too large a quantity of elements passed")
-                    log.Printf("error parsing .csv: %s", err)
-                    return nil, err
+					err = Error("too large a quantity of elements passed")
+					log.Printf("error parsing .csv: %s", err)
+					return nil, err
 				} else if el_count > n {
 					if *verbose {
 						log.Println("more symbols than qty, taking all symbols")

@@ -1,14 +1,14 @@
 package main
 
 import (
+	"code.google.com/p/gorilla/sessions"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
 	"regexp"
-    "path/filepath"
-    "time"
-    "code.google.com/p/gorilla/sessions"
+	"time"
 )
 
 var (
@@ -57,10 +57,10 @@ func baseHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func homeController(w http.ResponseWriter, r *http.Request) (err error) {
-    session, _ := store.Get(r, "bommom")
+	session, _ := store.Get(r, "bommom")
 	context := make(map[string]interface{})
 	context["Session"] = session.Values
-    log.Printf("%s\n", session.Values["UserName"])
+	log.Printf("%s\n", session.Values["UserName"])
 	context["BomList"], err = bomstore.ListBoms("")
 	if err != nil {
 		return
@@ -70,49 +70,49 @@ func homeController(w http.ResponseWriter, r *http.Request) (err error) {
 }
 
 func loginController(w http.ResponseWriter, r *http.Request) (err error) {
-    session, _ := store.Get(r, "bommom")
-    context := make(map[string]interface{})
-    context["ActionLogin"] = true
-    context["Session"] = session.Values
-    if r.Method == "POST" {
-        if isShortName(r.FormValue("UserName")) != true {
-            context["Problem"] = "Ugh, need to use a SHORTNAME!"
-            err = tmplAccount.Execute(w, context)
-            return
-        }
-        audience := "http://localhost:7070"
-        vResponse := VerifyPersonaAssertion(r.FormValue("assertion"), audience)
-        if vResponse.Okay() {
-            session.Values["UserName"] = r.FormValue("UserName")
-            session.Values["Email"] = vResponse.Email
-            session.Save(r, w)
-            context["Session"] = session.Values
-            http.Redirect(w, r, "/", 302)
-            return
-        } else {
-            context["Problem"] = vResponse.Reason
-            err = tmplAccount.Execute(w, context)
-            return
-        }
-    }
+	session, _ := store.Get(r, "bommom")
+	context := make(map[string]interface{})
+	context["ActionLogin"] = true
+	context["Session"] = session.Values
+	if r.Method == "POST" {
+		if isShortName(r.FormValue("UserName")) != true {
+			context["Problem"] = "Ugh, need to use a SHORTNAME!"
+			err = tmplAccount.Execute(w, context)
+			return
+		}
+		audience := "http://localhost:7070"
+		vResponse := VerifyPersonaAssertion(r.FormValue("assertion"), audience)
+		if vResponse.Okay() {
+			session.Values["UserName"] = r.FormValue("UserName")
+			session.Values["Email"] = vResponse.Email
+			session.Save(r, w)
+			context["Session"] = session.Values
+			http.Redirect(w, r, "/", 302)
+			return
+		} else {
+			context["Problem"] = vResponse.Reason
+			err = tmplAccount.Execute(w, context)
+			return
+		}
+	}
 	err = tmplAccount.Execute(w, context)
 	return
 }
 
 func logoutController(w http.ResponseWriter, r *http.Request) (err error) {
-    session, _ := store.Get(r, "bommom")
-    context := make(map[string]interface{})
-    delete(session.Values, "UserName")
-    delete(session.Values, "Email")
-    session.Save(r, w)
-    context["Session"] = session.Values
-    context["ActionLogout"] = true
+	session, _ := store.Get(r, "bommom")
+	context := make(map[string]interface{})
+	delete(session.Values, "UserName")
+	delete(session.Values, "Email")
+	session.Save(r, w)
+	context["Session"] = session.Values
+	context["ActionLogout"] = true
 	err = tmplAccount.Execute(w, context)
 	return
 }
 
 func userController(w http.ResponseWriter, r *http.Request, user, extra string) (err error) {
-    session, _ := store.Get(r, "bommom")
+	session, _ := store.Get(r, "bommom")
 	if !isShortName(user) {
 		http.Error(w, "invalid username: "+user, 400)
 		return
@@ -124,9 +124,9 @@ func userController(w http.ResponseWriter, r *http.Request, user, extra string) 
 	}
 	context := make(map[string]interface{})
 	context["BomList"], err = bomstore.ListBoms(ShortName(user))
-    if user == "common" {
-        context["IsCommon"] = true
-    }
+	if user == "common" {
+		context["IsCommon"] = true
+	}
 	context["UserName"] = user
 	context["Session"] = session.Values
 	if err != nil {
@@ -137,7 +137,7 @@ func userController(w http.ResponseWriter, r *http.Request, user, extra string) 
 }
 
 func bomController(w http.ResponseWriter, r *http.Request, user, name string) (err error) {
-    session, _ := store.Get(r, "bommom")
+	session, _ := store.Get(r, "bommom")
 	if !isShortName(user) {
 		http.Error(w, "invalid username: "+user, 400)
 		return
@@ -150,7 +150,7 @@ func bomController(w http.ResponseWriter, r *http.Request, user, name string) (e
 	context["BomMeta"], context["Bom"], err = bomstore.GetHead(ShortName(user), ShortName(name))
 	context["Session"] = session.Values
 	if err != nil {
-		http.Error(w, "404 couldn't open bom: " + user + "/" + name, 404)
+		http.Error(w, "404 couldn't open bom: "+user+"/"+name, 404)
 		return nil
 	}
 	err = tmplBomView.Execute(w, context)
@@ -158,7 +158,7 @@ func bomController(w http.ResponseWriter, r *http.Request, user, name string) (e
 }
 
 func bomUploadController(w http.ResponseWriter, r *http.Request, user, name string) (err error) {
-    session, _ := store.Get(r, "bommom")
+	session, _ := store.Get(r, "bommom")
 
 	if !isShortName(user) {
 		http.Error(w, "invalid username: "+user, 400)
@@ -170,93 +170,92 @@ func bomUploadController(w http.ResponseWriter, r *http.Request, user, name stri
 	}
 	context := make(map[string]interface{})
 	context["Session"] = session.Values
-    context["user"] = ShortName(user)
-    context["name"] = ShortName(name)
+	context["user"] = ShortName(user)
+	context["name"] = ShortName(name)
 	context["BomMeta"], context["Bom"], err = bomstore.GetHead(ShortName(user), ShortName(name))
 
-    switch r.Method {
+	switch r.Method {
 	case "POST":
-        err := r.ParseMultipartForm(1024*1024*2)
-        if err != nil {
-            log.Println(err)
-            http.Error(w, err.Error(), 400)
-            return nil
-        }
-        file, fileheader, err := r.FormFile("bomfile")
-        if err != nil {
-            log.Println(err)
-            context["error"] = "bomfile was nil!"
-            err = tmplBomUpload.Execute(w, context)
-            return err
-        }
-        if file == nil {
-            log.Println("bomfile was nil")
-            context["error"] = "bomfile was nil!"
-            err = tmplBomUpload.Execute(w, context)
-            return err
-        }
-        versionStr := r.FormValue("version")
-        if len(versionStr) == 0 || isShortName(versionStr) == false {
-            context["error"] = "Version must be specified and a ShortName!"
-            context["version"] = versionStr
-            err = tmplBomUpload.Execute(w, context)
-            return err
-        }
+		err := r.ParseMultipartForm(1024 * 1024 * 2)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), 400)
+			return nil
+		}
+		file, fileheader, err := r.FormFile("bomfile")
+		if err != nil {
+			log.Println(err)
+			context["error"] = "bomfile was nil!"
+			err = tmplBomUpload.Execute(w, context)
+			return err
+		}
+		if file == nil {
+			log.Println("bomfile was nil")
+			context["error"] = "bomfile was nil!"
+			err = tmplBomUpload.Execute(w, context)
+			return err
+		}
+		versionStr := r.FormValue("version")
+		if len(versionStr) == 0 || isShortName(versionStr) == false {
+			context["error"] = "Version must be specified and a ShortName!"
+			context["version"] = versionStr
+			err = tmplBomUpload.Execute(w, context)
+			return err
+		}
 
-        //contentType := fileheader.Header["Content-Type"][0]
-        var b *Bom
-        var bm *BomMeta
+		//contentType := fileheader.Header["Content-Type"][0]
+		var b *Bom
+		var bm *BomMeta
 
-        switch filepath.Ext(fileheader.Filename) {
-            case ".json":
-                bm, b, err = LoadBomFromJSON(file)
-                if err != nil {
-                    context["error"] = "Problem loading JSON file"
-                    err = tmplBomUpload.Execute(w, context)
-                    return err
-                }
-            case ".csv":
-                b, err = LoadBomFromCSV(file)
-                bm = &BomMeta{}
-                if err != nil {
-                    context["error"] = "Problem loading CSV file: " + err.Error()
-                    err = tmplBomUpload.Execute(w, context)
-                    return err
-                }
-            case ".xml":
-                bm, b, err = LoadBomFromXML(file)
-                if err != nil {
-                    context["error"] = "Problem loading XML file"
-                    err = tmplBomUpload.Execute(w, context)
-                    return err
-                }
-            default:
-                context["error"] = "Unknown file type: " + string(fileheader.Filename)
-                log.Fatal(context["error"])
-                err = tmplBomUpload.Execute(w, context)
-                return err
-        }
-        bm.Owner = user 
-        bm.Name = name
-        b.Progeny = "File uploaded from " + fileheader.Filename
-        b.Created = time.Now()
-        b.Version = string(versionStr)
-        if err := bomstore.Persist(bm, b, ShortName(versionStr)); err != nil {
-            context["error"] = "Problem saving to datastore: " + err.Error()
-            err = tmplBomUpload.Execute(w, context)
-        }
-        http.Redirect(w, r, "//" + user + "/" + name + "/", 302)
-        return err
+		switch filepath.Ext(fileheader.Filename) {
+		case ".json":
+			bm, b, err = LoadBomFromJSON(file)
+			if err != nil {
+				context["error"] = "Problem loading JSON file"
+				err = tmplBomUpload.Execute(w, context)
+				return err
+			}
+		case ".csv":
+			b, err = LoadBomFromCSV(file)
+			bm = &BomMeta{}
+			if err != nil {
+				context["error"] = "Problem loading CSV file: " + err.Error()
+				err = tmplBomUpload.Execute(w, context)
+				return err
+			}
+		case ".xml":
+			bm, b, err = LoadBomFromXML(file)
+			if err != nil {
+				context["error"] = "Problem loading XML file"
+				err = tmplBomUpload.Execute(w, context)
+				return err
+			}
+		default:
+			context["error"] = "Unknown file type: " + string(fileheader.Filename)
+			log.Fatal(context["error"])
+			err = tmplBomUpload.Execute(w, context)
+			return err
+		}
+		bm.Owner = user
+		bm.Name = name
+		b.Progeny = "File uploaded from " + fileheader.Filename
+		b.Created = time.Now()
+		b.Version = string(versionStr)
+		if err := bomstore.Persist(bm, b, ShortName(versionStr)); err != nil {
+			context["error"] = "Problem saving to datastore: " + err.Error()
+			err = tmplBomUpload.Execute(w, context)
+		}
+		http.Redirect(w, r, "//"+user+"/"+name+"/", 302)
+		return err
 	case "GET":
-        err = tmplBomUpload.Execute(w, context)
-        return err
-    default:
-        http.Error(w, "bad method", 405)
-        return nil
-    }
+		err = tmplBomUpload.Execute(w, context)
+		return err
+	default:
+		http.Error(w, "bad method", 405)
+		return nil
+	}
 	return
 }
-
 
 func serveCmd() {
 	var err error

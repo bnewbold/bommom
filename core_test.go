@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewBom(t *testing.T) {
-	b := makeTestBom()
+	b, _ := makeTestBom()
 	if b == nil {
 		t.Errorf("Something went wrong")
 	}
@@ -16,7 +16,7 @@ func TestNewBom(t *testing.T) {
 
 func TestBomJSONDump(t *testing.T) {
 
-	b := makeTestBom()
+	b, _ := makeTestBom()
 	enc := json.NewEncoder(os.Stdout)
 
 	if err := enc.Encode(b); err != nil {

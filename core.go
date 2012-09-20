@@ -15,22 +15,22 @@ type Offer struct {
 	Sku         string       `json:"sku"`
 	Url         string       `json:"distributor_url"`
 	Comment     string       `json:"comment"`
-    Available       uint32   `json:"avail"`
+	Available   uint32       `json:"avail"`
 	Prices      []OfferPrice `json:"prices"`
 }
 
 type LineItem struct {
-	Manufacturer string   `json:"manufacturer"`
-	Mpn          string   `json:"mpn"`
-	Description  string   `json:"description"`
-	FormFactor   string   `json:"form_factor"` // type:string
-	Specs        string   `json:"specs"`       // comma seperated list
-	Comment      string   `json:"comment"`
-	Tag          string   `json:"tag"`      // comma seperated list
-	Category     string   `json:"category"` // hierarchy as comma seperated list
-	Elements     []string `json:"elements"`
-	Offers       []Offer  `json:"offers"`
-    AggregateInfo map[string]string  `json:"miscinfo"`
+	Manufacturer  string            `json:"manufacturer"`
+	Mpn           string            `json:"mpn"`
+	Description   string            `json:"description"`
+	FormFactor    string            `json:"form_factor"` // type:string
+	Specs         string            `json:"specs"`       // comma seperated list
+	Comment       string            `json:"comment"`
+	Tag           string            `json:"tag"`      // comma seperated list
+	Category      string            `json:"category"` // hierarchy as comma seperated list
+	Elements      []string          `json:"elements"`
+	Offers        []Offer           `json:"offers"`
+	AggregateInfo map[string]string `json:"miscinfo"`
 }
 
 func (li *LineItem) Id() string {
@@ -117,6 +117,6 @@ func makeTestBom() (*BomMeta, *Bom) {
 	b.AddLineItem(&li)
 	b.AddLineItem(&li)
 	b.AddLineItem(&li)
-    bm := &BomMeta{Name: "Some Bom", Owner: "Some Owner", Description: "This is such a thing!", HeadVersion: b.Version, Homepage: "http://bommom.com", IsPublicView: true, IsPublicEdit: false}
+	bm := &BomMeta{Name: "Some Bom", Owner: "Some Owner", Description: "This is such a thing!", HeadVersion: b.Version, Homepage: "http://bommom.com", IsPublicView: true, IsPublicEdit: false}
 	return bm, b
 }
