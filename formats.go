@@ -53,6 +53,22 @@ func DumpBomAsText(bm *BomMeta, b *Bom, out io.Writer) {
 	tabWriter.Flush()
 }
 
+func DumpBomMarketInfo(bm *BomMeta, b *Bom, out io.Writer) {
+	fmt.Fprintln(out)
+	tabWriter := tabwriter.NewWriter(out, 2, 4, 1, ' ', 0)
+	// "by line item", not "by element"
+	fmt.Fprintf(tabWriter, "qty\tmanufacturer\tmpn\t\tavg_price\tfactor\n")
+	for _, li := range b.LineItems {
+		fmt.Fprintf(tabWriter, "%d\t%s\t%s\t\t%s\t%s\n",
+			len(li.Elements),
+			li.Manufacturer,
+			li.Mpn,
+			li.AggregateInfo["MarketPrice"],
+			li.AggregateInfo["MarketFactor"])
+	}
+	tabWriter.Flush()
+}
+
 // --------------------- csv -----------------------
 
 func DumpBomAsCSV(b *Bom, out io.Writer) {

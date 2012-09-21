@@ -146,6 +146,7 @@ func bomController(w http.ResponseWriter, r *http.Request, user, name string) (e
 		http.Error(w, "invalid bom name: "+name, 400)
 		return
 	}
+
 	context := make(map[string]interface{})
 	context["BomMeta"], context["Bom"], err = bomstore.GetHead(ShortName(user), ShortName(name))
 	context["Session"] = session.Values
@@ -153,6 +154,10 @@ func bomController(w http.ResponseWriter, r *http.Request, user, name string) (e
 		http.Error(w, "404 couldn't open bom: "+user+"/"+name, 404)
 		return nil
 	}
+    err = pricingSource.AttachMarketInfoBom(context["Bom"].(*Bom))
+    if err != nil {
+        log.Println("error attaching market info: " + err.Error())
+    }
 	err = tmplBomView.Execute(w, context)
 	return
 }
@@ -275,6 +280,7 @@ func serveCmd() {
 
 	openBomStore()
 	openAuthStore()
+    openPricingSource()
 
 	// serve template static assets (images, CSS, JS)
 	http.Handle("/static/", http.FileServer(http.Dir(*templatePath+"/")))

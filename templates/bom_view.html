@@ -11,11 +11,15 @@
   <th>manufacturer
   <th>mpn
   <th>description
+  <th>category
+  <!--
   <th>form_factor
   <th>specs
-  <th>category
   <th>tag
+  -->
   <th>comment
+  <th>price
+  <th>availability
 </tr>
 {{ range .Bom.LineItems }}
 <tr>
@@ -24,11 +28,15 @@
   <td>{{ .Manufacturer }}
   <td>{{ .Mpn }}
   <td>{{ .Description }}
+  <td>{{ .Category }}
+  <!--
   <td>{{ .FormFactor }}
   <td>{{ .Specs }}
-  <td>{{ .Category }}
   <td>{{ .Tag }}
+  -->
   <td>{{ .Comment }}
+  <td><a href="{{ .AggregateInfo.OctopartUrl }}">{{ .AggregateInfo.MarketPrice }}</a>
+  <td>{{ .AggregateInfo.MarketFactor }}
 </tr>
 {{ end }}
 </table>

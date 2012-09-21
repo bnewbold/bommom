@@ -112,11 +112,21 @@ func makeTestBom() (*BomMeta, *Bom) {
 		Mpn:      "WIDG0001",
 		Elements: []string{"W1", "W2"},
 		Offers:   []Offer{o}}
+	li2 := LineItem{Manufacturer: "Texas Instruments",
+		Mpn:      "NE555",
+		Elements: []string{"W1", "W2"},
+		Offers:   []Offer{o}}
+	li3 := LineItem{Manufacturer: "STMicroelectronics",
+		Mpn:      "L7905CV",
+		Elements: []string{"W1", "W2"},
+		Offers:   []Offer{o}}
 	//li.AddOffer(o)
 	b := NewBom("test01")
 	b.AddLineItem(&li)
+    // tests that lines don't get duplicated
 	b.AddLineItem(&li)
-	b.AddLineItem(&li)
+	b.AddLineItem(&li2)
+	b.AddLineItem(&li3)
 	bm := &BomMeta{Name: "Some Bom", Owner: "Some Owner", Description: "This is such a thing!", HeadVersion: b.Version, Homepage: "http://bommom.com", IsPublicView: true, IsPublicEdit: false}
 	return bm, b
 }

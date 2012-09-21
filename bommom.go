@@ -28,6 +28,7 @@ var (
 	listenPort    = flag.Uint("port", 7070, "port to listen on (HTTP serve)")
 	listenHost    = flag.String("host", "", "hostname to listen on (HTTP serve)")
 	sessionSecret = flag.String("sessionSecret", "12345", "cookie session secret")
+	octoApiKey    = flag.String("octopartApiKey", "", "octopart.com API key (for pricing info)")
 )
 
 func main() {
@@ -86,6 +87,10 @@ func openBomStore() {
 func openAuthStore() {
 	// defaults to dummy auth system
 	auth = DummyAuth(true)
+}
+
+func openPricingSource() {
+	pricingSource = NewOctopartClient(*octoApiKey)
 }
 
 func dumpOut(fname string, bm *BomMeta, b *Bom) {

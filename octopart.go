@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+    "strconv"
 	//"io/ioutil"
 )
 
@@ -29,11 +30,6 @@ func NewOctopartClient(apikey string) *OctopartClient {
 	oc.client = &http.Client{}
 	oc.infoCache = make(map[string]interface{})
 	return oc
-}
-
-func openPricingSource() {
-	// TODO: pass through octopart API key here
-	pricingSource = NewOctopartClient("")
 }
 
 func (oc *OctopartClient) apiCall(method string, params map[string]string) (map[string]interface{}, error) {
@@ -76,6 +72,7 @@ func (oc *OctopartClient) bomApiCall(manufacturers, mpns []string) ([]map[string
 		listItem = make(map[string]string)
 		listItem["mpn_or_sku"] = mpns[i]
 		listItem["manufacturer"] = manufacturers[i]
+		//listItem["q"] = mpns[i]
 		listItem["limit"] = "1"
 		listItem["reference"] = manufacturers[i] + "|" + mpns[i]
 		queryList[i] = listItem
@@ -95,7 +92,10 @@ func (oc *OctopartClient) bomApiCall(manufacturers, mpns []string) ([]map[string
 	ret := make([]map[string]interface{}, len(mpns))
 	for i, rawresult := range response["results"].([]interface{}) {
 		result := rawresult.(map[string]interface{})
-		hits := int(result["hits"].(float64))
+        hits := int(0)
+        if result["hits"] != nil {
+            hits = int(result["hits"].(float64))
+        }
 		reference := result["reference"].(string)
 		if hits == 0 {
 			ret[i] = nil
@@ -109,7 +109,7 @@ func (oc *OctopartClient) bomApiCall(manufacturers, mpns []string) ([]map[string
 }
 
 // this method checks the API query cache
-func (oc *OctopartClient) GetMarketInfoList(manufacturers, mpns []string) ([]interface{}, error) {
+func (oc *OctopartClient) GetMarketInfoList(manufacturers, mpns []string) ([]map[string]interface{}, error) {
 	if len(mpns) < 1 {
 		return nil, Error("no mpns strings passed in")
 	}
@@ -131,20 +131,30 @@ func (oc *OctopartClient) GetMarketInfoList(manufacturers, mpns []string) ([]int
 		}
 	}
 	// if necessary, fetch missing queryHashes remotely
-	if len(mpnToQuery) > 0 {
-		if _, err := oc.bomApiCall(manufacturersToQuery, mpnToQuery); err != nil {
+	for len(mpnToQuery) > 0 {
+        high := len(mpnToQuery)
+        if high >= 20 {
+            high = 20
+        }
+		if _, err := oc.bomApiCall(manufacturersToQuery[0:high], mpnToQuery[0:high]); err != nil {
 			return nil, err
 		}
+        mpnToQuery = mpnToQuery[high:len(mpnToQuery)]
+        manufacturersToQuery = manufacturersToQuery[high:len(manufacturersToQuery)]
 	}
 	// construct list of return info
-	result := make([]interface{}, len(mpns))
+	result := make([]map[string]interface{}, len(mpns))
 	for i, _ := range mpns {
 		queryHash = manufacturers[i] + "|" + mpns[i]
 		value, hasKey := oc.infoCache[queryHash]
 		if hasKey != true {
 			return nil, Error("key should be in cache, but isn't: " + queryHash)
 		}
-		result[i] = value
+        if value == nil || mpns[i] == "" || manufacturers[i] == "" {
+            result[i] = nil
+        } else {
+		    result[i] = value.(map[string]interface{})
+        }
 	}
 	return result, nil
 }
@@ -154,7 +164,7 @@ func (oc *OctopartClient) GetMarketInfo(manufacturer, mpn string) (map[string]in
     if err != nil {
         return nil, err
     }
-    return info[0].(map[string]interface{}), nil
+    return info[0], nil
 }
 
 func (oc *OctopartClient) GetExtraInfo(manufacturer, mpn string) (map[string]string, error) {
@@ -164,11 +174,16 @@ func (oc *OctopartClient) GetExtraInfo(manufacturer, mpn string) (map[string]str
 	}
     // extract market price, total avail, and "availability factor" from
     // market info
-	log.Println(marketInfo)
     ret := make(map[string]string)
-    ret["MarketPrice"] = marketInfo["avg_price"].(string)
-    ret["MarketFactor"] = marketInfo["market_availability"].(string)
-    ret["MarketTotalAvailable"] = marketInfo["total_avail"].(string)
+    if marketInfo != nil {
+        if marketInfo["avg_price"].([]interface{})[0] != nil {
+            ret["MarketPrice"] = "$" + strconv.FormatFloat(marketInfo["avg_price"].([]interface{})[0].(float64), 'f', 2, 64)
+        } else {
+            ret["MarketPrice"] = ""
+        }
+        ret["MarketFactor"] = marketInfo["market_status"].(string)
+        ret["OctopartUrl"] = marketInfo["detail_url"].(string)
+    } 
 	return ret, nil
 }
 
@@ -188,5 +203,21 @@ func (oc *OctopartClient) AttachMarketInfo(li *LineItem) error {
 }
 
 func (oc *OctopartClient) AttachMarketInfoBom(b *Bom) error {
+    // first ensure the cache is primed
+    manufacturers := make([]string, len(b.LineItems))
+    mpns := make([]string, len(b.LineItems))
+    for i, li := range b.LineItems {
+        manufacturers[i] = li.Manufacturer
+        mpns[i] = li.Mpn
+    }
+    _, err := oc.GetMarketInfoList(manufacturers, mpns)
+    if err != nil {
+        log.Println(err.Error())
+        return err
+    }
+
+    for i := range b.LineItems {
+        oc.AttachMarketInfo(&(b.LineItems[i]))
+    }
 	return nil
 }

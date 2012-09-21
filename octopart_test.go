@@ -26,7 +26,7 @@ func TestGetMarketInfoList(t *testing.T) {
 		if r == nil {
 			log.Printf("\t%d: %s", i, "nil")
 		} else {
-			log.Printf("\t%d: %s", i, r.(map[string]interface{})["detail_url"])
+			log.Printf("\t%d: %s", i, r["detail_url"])
 		}
 	}
 	log.Println("Running a second time, results should be cached...")
@@ -38,7 +38,7 @@ func TestGetMarketInfoList(t *testing.T) {
 		if r == nil {
 			log.Printf("\t%d: %s", i, "nil")
 		} else {
-			log.Printf("\t%d: %s", i, r.(map[string]interface{})["detail_url"])
+			log.Printf("\t%d: %s", i, r["detail_url"])
 		}
 	}
 	log.Println("Running in single mode, result should be cached...")
@@ -47,9 +47,9 @@ func TestGetMarketInfoList(t *testing.T) {
 		t.Errorf("Error with api call: " + err.Error())
 	}
     if result_single == nil {
-        log.Printf("\t%d: %s", "nil")
+        log.Printf("\t%d: %s", 0, "nil")
     } else {
-        log.Printf("\t%d: %s", result_single["detail_url"])
+        log.Printf("\t%d: %s", 0, result_single["detail_url"])
     }
 }
 
@@ -58,6 +58,10 @@ func TestAttachInfo(t *testing.T) {
 	bm := &BomMeta{}
 	oc := NewOctopartClient("")
 	oc.AttachMarketInfoBom(b)
-	t.Errorf("unimplemented")
-	DumpBomAsText(bm, b, os.Stdout)
+	//t.Errorf("unimplemented")
+	//DumpBomAsText(bm, b, os.Stdout)
+	DumpBomMarketInfo(bm, b, os.Stdout)
+    log.Println("Running a second time, results should be cached...")
+	oc.AttachMarketInfoBom(b)
+	DumpBomMarketInfo(bm, b, os.Stdout)
 }
