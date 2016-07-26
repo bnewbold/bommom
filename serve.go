@@ -1,7 +1,7 @@
 package main
 
 import (
-	"code.google.com/p/gorilla/sessions"
+	"github.com/gorilla/sessions"
 	"fmt"
 	"html/template"
 	"log"
