@@ -80,7 +80,7 @@ func loginController(w http.ResponseWriter, r *http.Request) (err error) {
 			err = tmplAccount.Execute(w, context)
 			return
 		}
-		audience := "http://bommom.com/"
+		audience := "http://bommom.memeschemes.com/"
 		vResponse := VerifyPersonaAssertion(r.FormValue("assertion"), audience)
 		if vResponse.Okay() {
 			session.Values["UserName"] = r.FormValue("UserName")

@@ -127,6 +127,6 @@ func makeTestBom() (*BomMeta, *Bom) {
 	b.AddLineItem(&li)
 	b.AddLineItem(&li2)
 	b.AddLineItem(&li3)
-	bm := &BomMeta{Name: "Some Bom", Owner: "Some Owner", Description: "This is such a thing!", HeadVersion: b.Version, Homepage: "http://bommom.com", IsPublicView: true, IsPublicEdit: false}
+	bm := &BomMeta{Name: "Some Bom", Owner: "Some Owner", Description: "This is such a thing!", HeadVersion: b.Version, Homepage: "http://bommom.memeschemes.com", IsPublicView: true, IsPublicEdit: false}
 	return bm, b
 }
